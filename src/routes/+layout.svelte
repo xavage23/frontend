@@ -44,7 +44,7 @@
 	</main>
 
 	<footer class="mb-auto border-white border-t-2">
-		<p class="text-center text-white text-md font-semibold">&copy; 2020 XAVAGE 2023</p>
+		<p class="text-center text-white text-md font-semibold">&copy; XAVAGE 2023</p>
 		<small class="text-center text-white text-sm font-semibold">
 			{buildInfo?.version}-{buildInfo?.publicCommit}-{buildInfo?.nodeEnv?.substring(0, 4)} ({buildInfo?.lastMod})
 		</small>

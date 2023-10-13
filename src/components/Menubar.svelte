@@ -61,7 +61,7 @@
 				alt="IBL Logo"
 			/>
 			<span class="self-center text-xl font-semibold whitespace-nowrap text-white"
-				>Infinity Panel</span
+				>XAVAGE23</span
 			>
 		</a>
 

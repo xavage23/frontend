@@ -23,9 +23,6 @@ export default defineConfig({
 			org: 'xavage23',
 			project: 'frontend-bb',
 			url: 'https://trace.infinitybots.gg/',
-			release: {
-				name: version,
-			}
 		})
 	],
 	define: {

@@ -109,7 +109,7 @@
 	<Loading {msg} />
 {:then data}
 	<article class="p-4">
-		<h1 class="text-3xl font-semibold">{data?.userData?.username}</h1>
+		<h1 class="text-3xl font-semibold">Welcome, {data?.userData?.username}!</h1>
 
 		<InputText
 			id="gamecode"

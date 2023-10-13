@@ -4,7 +4,7 @@
 
 <section>
 	<h3 aria-live="polite" class="text-center text-6xl font-semibold p-10">
-		Welcome to Infinity Panel
+		Bulls And Bears
 	</h3>
 	<svg
 		aria-labelledby="___panelLoad"

@@ -1,1 +1,1 @@
-export const apiUrl = "https://stocksim-api.narc.live"
+export const apiUrl = "https://stocksim2-api.narc.live"

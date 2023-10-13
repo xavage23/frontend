@@ -49,7 +49,7 @@
 			} catch (e) {
 				logger.error('XavageBB', 'Failed to load auth state data from localStorage');
 
-				if ($page?.url?.pathname?.startsWith('/login')) {
+				if (!$page?.url?.pathname?.startsWith('/login')) {
 					await goto(`/login?redirect=${window?.location?.pathname}`);
 				}
 				return false;
@@ -57,7 +57,7 @@
 		}
 
 		if (!authorized) {
-			if ($page.url.pathname?.startsWith('/login')) {
+			if (!$page.url.pathname?.startsWith('/login')) {
 				await goto(`/login?redirect=${window.location.pathname}`);
 			}
 			return false;

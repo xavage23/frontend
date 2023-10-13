@@ -5,8 +5,6 @@
 	import { authState, type AuthState } from '$lib/authState';
 	import { onMount } from 'svelte';
 	import { goto as gotoOnce } from '$app/navigation';
-	import logger from '$lib/logger';
-	import { utf8ToHex } from '$lib/strings';
 	import { Color } from '../../components/button/colors';
 	import { fetchClient } from '$lib/fetch';
 	import { apiUrl } from '$lib/constants';
@@ -26,8 +24,8 @@
 		}
 	});
 
-	let username: string = '';
-	let password: string = '';
+	let username: string;
+	let password: string;
 
 	const login = async () => {
 		if (!username || !password) {
@@ -96,7 +94,7 @@
 		icon={'mdi:login'}
 		text={'Login'}
 		states={{
-			loading: 'Contacting instance...',
+			loading: 'Please wait...',
 			success: 'Moving you along...',
 			error: 'Failed to login'
 		}}
