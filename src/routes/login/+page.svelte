@@ -86,6 +86,7 @@
 		label="Password"
 		placeholder="Enter your password"
 		minlength={1}
+		secret={true}
 		showErrors={false}
 	/>
 

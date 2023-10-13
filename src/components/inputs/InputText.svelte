@@ -9,6 +9,7 @@
 	export let showErrors: boolean = true;
 	export let description: string = '';
 	export let inpClass: string = 'mb-4';
+	export let secret: boolean = false;
 
 	let success: boolean | null = null;
 
@@ -38,16 +39,29 @@
 		<p class="text-md mb-2 opacity-80">{@html description}</p>
 	{/if}
 
-	<input
-		on:change={checkLength}
-		{minlength}
-		type="text"
-		{id}
-		class="w-full mx-auto mt-2 flex transition duration-200 hover:bg-slate-900 bg-black bg-opacity-100 text-white focus:text-themable-400 rounded-xl border border-themable-200 focus:border-themable-400 focus:outline-none py-4 px-6"
-		{placeholder}
-		required
-		bind:value
-	/>
+	{#if secret}
+		<input
+			on:change={checkLength}
+			{minlength}
+			type="password"
+			{id}
+			class="w-full mx-auto mt-2 flex transition duration-200 hover:bg-slate-900 bg-black bg-opacity-100 text-white focus:text-themable-400 rounded-xl border border-themable-200 focus:border-themable-400 focus:outline-none py-4 px-6"
+			{placeholder}
+			required
+			bind:value
+		/>
+	{:else}
+		<input
+			on:change={checkLength}
+			{minlength}
+			type="text"
+			{id}
+			class="w-full mx-auto mt-2 flex transition duration-200 hover:bg-slate-900 bg-black bg-opacity-100 text-white focus:text-themable-400 rounded-xl border border-themable-200 focus:border-themable-400 focus:outline-none py-4 px-6"
+			{placeholder}
+			required
+			bind:value
+		/>
+	{/if}
 
 	{#if success == true}
 		<p class="mt-2 text-sm text-green-600 dark:text-green-500">

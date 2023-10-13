@@ -1,5 +1,7 @@
+import { get } from 'svelte/store';
 import logger from './logger';
 import { logoutUser } from './logout';
+import { authState } from './authState';
 
 export const fetchClient = async (url: string, init?: RequestInit) => {
 	logger.info('FetchClient', init?.method || 'GET', url);
@@ -10,7 +12,9 @@ export const fetchClient = async (url: string, init?: RequestInit) => {
 
 	if(!init?.headers) {
 		init.headers = {
-			"Content-Type": "application/json"
+			"Content-Type": "application/json",
+			"Authorization": get(authState)?.token || "",
+			"X-GameUser-ID": get(authState)?.gameId || "",
 		};
 	}
 

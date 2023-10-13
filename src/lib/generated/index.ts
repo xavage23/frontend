@@ -52,4 +52,21 @@ export interface AssetMetadata {
     username: string;
     enabled: boolean;
     root: boolean;
+    created_at: string /* RFC3339 */;
   }
+  export interface GameJoinRequest {
+    game_code: string;
+    passphrase: string;
+  }
+  export interface GameJoinResponse {
+    id: string;
+    new: boolean;
+  }
+  export interface GameJoin {
+    id: string;
+    user_id: string;
+    game_id: string;
+    balance: number /* int64 */;
+    created_at: string /* RFC3339 */;
+  }
+  

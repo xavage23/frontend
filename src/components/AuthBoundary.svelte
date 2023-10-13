@@ -9,8 +9,10 @@
 	import { fetchClient } from '$lib/fetch';
 	import { apiUrl } from '$lib/constants';
 	import type { ApiError, User } from '$lib/generated';
+	import DangerButton from './inputs/multi/DangerButton.svelte';
 
 	let loadingMsg = 'Waiting for monkeys?';
+	let errorContext = '';
 	let navigating: boolean = false;
 
 	// Safari needs this patch here
@@ -40,6 +42,22 @@
 				let json: AuthState = JSON.parse(authStateData);
 				$authState = json;
 
+				let authCheckRes = await fetchClient(`${apiUrl}/users/${$authState?.userId}/check_auth`, {
+					method: "POST",
+				})
+
+				if (!authCheckRes.ok) {
+					if([401, 403].includes(authCheckRes.status)) {
+						let err: ApiError = await authCheckRes.json();
+						errorContext = err?.message || 'Failed to check auth';
+						throw new Error("Session expired. Please logout and login again");
+					}
+					
+					let err: ApiError = await authCheckRes.json();
+					throw new Error(err?.message || 'Failed to check auth');
+				}
+
+
 				if(!$authState?.gameId) {
 					await goto(`/login/game-connect?redirect=${window.location.pathname}`);
 					return false;
@@ -48,11 +66,7 @@
 				authorized = true;
 			} catch (e) {
 				logger.error('XavageBB', 'Failed to load auth state data from localStorage');
-
-				if (!$page?.url?.pathname?.startsWith('/login')) {
-					await goto(`/login?redirect=${window?.location?.pathname}`);
-				}
-				return false;
+				throw e;
 			}
 		}
 
@@ -105,4 +119,30 @@
 	{/if}
 {:catch err}
 	<ErrorComponent msg={err?.toString()} />
+
+	{#if errorContext}
+		<p class="text-center text-red-500 text-xl font-semibold mt-4">
+			{errorContext}
+		</p>
+	{/if}
+
+	{#if $authState && $authState?.gameId}
+	<div id="action-box" class="mt-3 rounded-md text-center">
+		<button
+			class="text-white hover:text-gray-300 focus:outline-none px-2 py-3 border font-semibold"
+			on:click={() => {
+				// Remove game id from authstate
+				let newAuthState = {
+					...$authState,
+					gameId: undefined
+				}
+
+				localStorage.setItem('authState', JSON.stringify(newAuthState));
+				window.location.reload()
+			}}
+		>
+			Leave Game
+		</button>
+	</div>
+	{/if}
 {/await}

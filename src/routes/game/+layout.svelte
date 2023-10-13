@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { state } from '$lib/state';
 	import AuthBoundary from '../../components/AuthBoundary.svelte';
 	import ListItem from '../../components/ListItem.svelte';
 	import UnorderedList from '../../components/UnorderedList.svelte';
@@ -44,20 +45,11 @@
 	let perms: String[] = [];
 
 	$: {
-		quickActions = [];
 		perms = [];
 
-		quickActions.push({
-			name: 'Index',
-			description: 'Index Page',
-			link: '/panel'
-		});
-
-		quickActions.push({
-			name: 'Settings',
-			description: 'Customize your experience!',
-			link: '/panel/settings'
-		});
+		if($state?.user?.root) {
+			perms.push("Root");
+		}
 	}
 </script>
 

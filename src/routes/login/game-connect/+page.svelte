@@ -10,11 +10,12 @@
 	import { authState, type AuthState } from '$lib/authState';
 	import { fetchClient } from '$lib/fetch';
 	import { apiUrl } from '$lib/constants';
-	import type { ApiError, User } from '$lib/generated';
+	import type { ApiError, GameJoinRequest, GameJoinResponse, User } from '$lib/generated';
 
 	let msg: string = 'Loading game selection screen...';
 
 	let inputtedGameCode: string = '';
+	let inputtedPassphrase: string = '';
 
 	const redirect = () => {
 		let searchParams = new URLSearchParams(window.location.search);
@@ -30,12 +31,26 @@
 		logger.info("MFA", authStateData)
 
 		if (!authStateData) {
-			throw new Error("Couldn't find auth data in localStorage")
+			await goto(`/login?redirect=${redirect()}`);
+			return;
 		}
 
 		try {
 			let json: AuthState = JSON.parse(authStateData);
 			$authState = json;
+
+			let authCheckRes = await fetchClient(`${apiUrl}/users/${$authState?.userId}/check_auth`, {
+					method: "POST"
+				})
+
+			if (!authCheckRes.ok) {
+				if([401, 403].includes(authCheckRes.status)) {
+					throw new Error("Session expired. Please logout and login again");
+				}
+				
+				let err: ApiError = await authCheckRes.json();
+				throw new Error(err?.message || 'Failed to check auth');
+			}
 
 			if ($authState?.gameId) {
 				await goto(redirect());
@@ -67,41 +82,40 @@
 	};
 
 	const gameConnect = async () => {
-		if (!inputtedGameCode) {
+		if (!inputtedGameCode || !inputtedPassphrase) {
 			errorToast('Please enter a game code');
 			return false;
 		}
 
-		/*try {
-			let res = await panelQuery({
-				LoginActivateSession: {
-					login_token: $panelAuthState?.loginToken || '',
-					otp: inputtedCode
-				}
-			});
+		let jr: GameJoinRequest = {
+			game_code: inputtedGameCode,
+			passphrase: inputtedPassphrase
+		}
 
-			if (!res.ok) {
-				let err = await res.text();
-				errorToast(err);
-				return false;
-			}
+		let res = await fetchClient(`${apiUrl}/users/${$authState?.userId}/join_game`, {
+			method: "POST",
+			body: JSON.stringify(jr),
+		})
 
-			localStorage.setItem(
-				'panelStateData',
-				JSON.stringify({
-					...$panelAuthState,
-					sessionState: 'active'
-				})
-			);
-
-			goto(redirect());
-			return true;
-		} catch (e) {
-			errorToast(e?.toString() || 'Unknown error');
+		if (!res.ok) {
+			let err: ApiError = await res.json();
+			errorToast(err?.message || 'Failed to join game');
 			return false;
-		}*/
+		}
 
-		return true;
+		let jresp: GameJoinResponse = await res.json();
+
+		let as: AuthState = {
+			token: $authState?.token || '',
+			userId: $authState?.userId || '',
+			gameId: jresp.id,
+			newGame: jresp.new
+		}
+
+		localStorage.setItem('authState', JSON.stringify(as));
+
+		goto("/game")
+		return true
 	};
 </script>
 
@@ -121,14 +135,25 @@
 			showErrors={false}
 		/>
 
+		<InputText
+			id="passphrase"
+			minlength={0}
+			label="Passphrase"
+			description="Shhh, don't tell anyone!"
+			placeholder="Code"
+			bind:value={inputtedPassphrase}
+			showErrors={false}
+			secret={true}
+		/>
+
 		<ButtonReact
 			color={Color.Themable}
 			icon={'mdi:key'}
 			text={'Connect'}
 			states={{
-				loading: 'Activating session...',
-				success: 'Successfully activated session!',
-				error: 'Failed to verify OTP and/or log you in!'
+				loading: 'Activating game...',
+				success: 'Successfully activated game!',
+				error: 'Failed to fetch this game!'
 			}}
 			onClick={gameConnect}
 		/>
