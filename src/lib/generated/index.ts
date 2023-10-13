@@ -62,10 +62,20 @@ export interface AssetMetadata {
     id: string;
     new: boolean;
   }
-  export interface GameJoin {
+  export interface Game {
+    id: string;
+    code: string;
+    enabled: boolean;
+    description: string;
+    created_at: string /* RFC3339 */;
+    current_price: string;
+    initial_balance: number /* int64 */;
+  }
+  export interface GameUser {
     id: string;
     user_id: string;
     game_id: string;
+    game: Game;
     balance: number /* int64 */;
     created_at: string /* RFC3339 */;
   }

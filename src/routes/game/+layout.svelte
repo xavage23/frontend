@@ -41,16 +41,6 @@
 			link: "/game/leaderboard",
 		},
 	];
-
-	let perms: String[] = [];
-
-	$: {
-		perms = [];
-
-		if($state?.user?.root) {
-			perms.push("Root");
-		}
-	}
 </script>
 
 <AuthBoundary>
@@ -62,14 +52,14 @@
 				{/each}
 			</div>
 
-			<div class="mt-4" />
-
-			<span class="font-semibold">Permissions:</span>
-			<UnorderedList>
-				{#each perms as perm}
-					<ListItem>{perm}</ListItem>
-				{/each}
-			</UnorderedList>
+			<div class="mt-4">
+				<p class="font-semibold">Balance: ${Math.round(($state?.gameUser?.balance || 0) / 100)}</p>
+				<p class="font-semibold">Initial Balance: ${Math.round(($state?.gameUser?.game?.initial_balance || 0) / 100)}</p>
+				<div class="mb-5"></div>
+				<small class="block"><span class="font-semibold">Current Prices:</span> {$state?.gameUser?.game?.current_price}</small>
+				<small class="block"><span class="font-semibold">Game:</span> {$state?.gameUser?.game?.code} - {$state?.gameUser?.game?.description}</small>	
+				<small class="block"><span class="font-semibold">Game Created On:</span> {new Date($state?.gameUser?.game?.created_at || 0)?.toLocaleString()}</small>
+			</div>
 		</InfoPane>
 
 		<PaneContent>

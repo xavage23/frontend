@@ -8,7 +8,7 @@
 	import ErrorComponent from './Error.svelte';
 	import { fetchClient } from '$lib/fetch';
 	import { apiUrl } from '$lib/constants';
-	import type { ApiError, User } from '$lib/generated';
+	import type { ApiError, GameUser, User } from '$lib/generated';
 	import DangerButton from './inputs/multi/DangerButton.svelte';
 
 	let loadingMsg = 'Waiting for monkeys?';
@@ -90,9 +90,25 @@
 
 		let user: User = await userRes.json();
 
-		$state = {
-			user
-		};
+		if($authState?.gameId) {
+			let gameUserRes = await fetchClient(`${apiUrl}/users/${$authState?.userId}/current_game_user`)
+
+			if (!gameUserRes.ok) {
+				let err: ApiError = await gameUserRes.json();
+				throw new Error(`Failed to fetch game user: ${err}`);
+			}
+
+			let gameUser: GameUser = await gameUserRes.json();
+
+			$state = {
+				user,
+				gameUser
+			}
+		} else {
+			$state = {
+				user
+			};
+		}
 
 		setInterval(checkAuth, 1000 * 60 * 1);
 
