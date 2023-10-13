@@ -55,6 +55,7 @@
 			<div class="mt-4">
 				<p class="font-semibold">Balance: ${Math.round(($state?.gameUser?.balance || 0) / 100)}</p>
 				<p class="font-semibold">Initial Balance: ${Math.round(($state?.gameUser?.game?.initial_balance || 0) / 100)}</p>
+				<p class="font-semibold">Net Profit/Loss: ${Math.round((($state?.gameUser?.balance || 0) - ($state?.gameUser?.game?.initial_balance || 0)) / 100)}</p>
 				<div class="mb-5"></div>
 				<small class="block"><span class="font-semibold">Current Prices:</span> {$state?.gameUser?.game?.current_price}</small>
 				<small class="block"><span class="font-semibold">Game:</span> {$state?.gameUser?.game?.code} - {$state?.gameUser?.game?.description}</small>	
