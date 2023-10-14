@@ -30,7 +30,7 @@
     let rows: Readable<TransactionRow[]>;
 
     const fetchTransactions = async () => {
-        let res = await fetchClient(`${apiUrl}/users/${$state?.user?.id}/transactions?include_users=true&include_stocks=true`)
+        let res = await fetchClient(`${apiUrl}/users/${$state?.user?.id}/transactions?include_users=true&with_prior_prices=true`)
 
         if (!res.ok) {
             let err: ApiError = await res.json();
@@ -140,9 +140,11 @@
                         <td>${row.currentPrice}</td>
                         <td>${row.averagePrice}</td>
                         <td>
-                            {#each row.allPrices as price}
-                                ${Math.round(price / 100)}
-                            {/each}
+                            <ul class="list-disc">
+                                {#each row.allPrices as price}
+                                <li>${Math.round(price / 100)}</li>
+                                {/each}
+                            </ul>
                         </td>
                         <td>{row.amount}</td>
                         <td>
