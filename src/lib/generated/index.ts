@@ -61,10 +61,19 @@ export interface AssetMetadata {
     created_at: string /* RFC3339 */;
     ratios?: (StockRatio | undefined)[];
   }
+  export interface StockList {
+    stocks: (Stock | undefined)[];
+    price_index: number /* int */;
+  }
   
   //////////
   // source: transact.go
   
+  export interface CreateTransaction {
+    stock_id: string;
+    amount: number /* int64 */;
+    action: string;
+  }
   export interface UserTransaction {
     id: string;
     user_id: string;
