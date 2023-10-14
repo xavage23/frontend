@@ -81,7 +81,6 @@ export interface AssetMetadata {
     game_id: string;
     user?: User;
     stock_id: string;
-    stock_ticker: string;
     stock?: Stock;
     price_index: number /* int */;
     sale_price: number /* int64 */;
