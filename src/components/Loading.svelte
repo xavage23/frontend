@@ -1,11 +1,14 @@
 <script lang="ts">
 	export let msg: string;
+	export let disableHeader: boolean = false;
 </script>
 
 <section>
-	<h3 aria-live="polite" class="text-center text-6xl font-semibold p-10">
-		Bulls And Bears
-	</h3>
+	{#if !disableHeader}
+		<h3 aria-live="polite" class="text-center text-6xl font-semibold p-10">
+			Bulls And Bears
+		</h3>
+	{/if}
 	<svg
 		aria-labelledby="___panelLoad"
 		class="ml-auto mr-auto text-center animate-spin h-48 w-48"

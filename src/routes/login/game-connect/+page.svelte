@@ -15,7 +15,6 @@
 	let msg: string = 'Loading game selection screen...';
 
 	let inputtedGameCode: string = '';
-	let inputtedPassphrase: string = '';
 
 	const redirect = () => {
 		let searchParams = new URLSearchParams(window.location.search);
@@ -82,14 +81,13 @@
 	};
 
 	const gameConnect = async () => {
-		if (!inputtedGameCode || !inputtedPassphrase) {
+		if (!inputtedGameCode) {
 			errorToast('Please enter a game code');
 			return false;
 		}
 
 		let jr: GameJoinRequest = {
 			game_code: inputtedGameCode,
-			passphrase: inputtedPassphrase
 		}
 
 		let res = await fetchClient(`${apiUrl}/users/${$authState?.userId}/join_game`, {
@@ -133,17 +131,6 @@
 			placeholder="Code"
 			bind:value={inputtedGameCode}
 			showErrors={false}
-		/>
-
-		<InputText
-			id="passphrase"
-			minlength={0}
-			label="Passphrase"
-			description="Shhh, don't tell anyone!"
-			placeholder="Code"
-			bind:value={inputtedPassphrase}
-			showErrors={false}
-			secret={true}
 		/>
 
 		<ButtonReact

@@ -9,4 +9,5 @@ export interface QuickAction {
 	description: string;
 	link: string;
 	options?: Option[];
+	enabled: () => boolean;
 }

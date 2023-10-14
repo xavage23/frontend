@@ -45,6 +45,40 @@ export interface AssetMetadata {
   }
   
   //////////
+  // source: stock.go
+  
+  export interface StockRatio {
+    name: string;
+    ratio: number /* float64 */;
+  }
+  export interface Stock {
+    id: string;
+    game_id: string;
+    ticker: string;
+    company_name: string;
+    current_price: number /* int64 */;
+    known_prices: number /* int64 */[];
+    created_at: string /* RFC3339 */;
+    ratios?: (StockRatio | undefined)[];
+  }
+  
+  //////////
+  // source: transact.go
+  
+  export interface UserTransaction {
+    id: string;
+    user_id: string;
+    game_id: string;
+    user?: User;
+    stock_id: string;
+    stock?: Stock;
+    price_index: number /* int */;
+    amount: number /* int64 */;
+    action: string;
+    created_at: string /* RFC3339 */;
+  }
+  
+  //////////
   // source: user.go
   
   export interface User {
@@ -56,7 +90,6 @@ export interface AssetMetadata {
   }
   export interface GameJoinRequest {
     game_code: string;
-    passphrase: string;
   }
   export interface GameJoinResponse {
     id: string;
@@ -66,9 +99,10 @@ export interface AssetMetadata {
     id: string;
     code: string;
     enabled: boolean;
+    trading_enabled: boolean;
     description: string;
     created_at: string /* RFC3339 */;
-    current_price: string;
+    current_price_index: number /* int */;
     initial_balance: number /* int64 */;
   }
   export interface GameUser {
@@ -76,7 +110,8 @@ export interface AssetMetadata {
     user_id: string;
     game_id: string;
     game: Game;
-    balance: number /* int64 */;
+    initial_balance: number /* int64 */;
+    current_balance: number /* int64 */;
     created_at: string /* RFC3339 */;
   }
   

@@ -38,6 +38,7 @@
 		"@sentry/browser": "^7.64.0",
 		"@sentry/types": "^7.64.0",
 		"@sentry/vite-plugin": "^2.7.1",
+		"@vincjo/datatables": "^1.12.7",
 		"@zerodevx/svelte-toast": "^0.9.5"
 	}
 }

@@ -9,7 +9,7 @@
 	import { fetchClient } from '$lib/fetch';
 	import { apiUrl } from '$lib/constants';
 	import type { ApiError, GameUser, User } from '$lib/generated';
-	import DangerButton from './inputs/multi/DangerButton.svelte';
+	import { logoutUser } from '$lib/logout';
 
 	let loadingMsg = 'Waiting for monkeys?';
 	let errorContext = '';
@@ -95,7 +95,7 @@
 
 			if (!gameUserRes.ok) {
 				let err: ApiError = await gameUserRes.json();
-				throw new Error(`Failed to fetch game user: ${err}`);
+				throw new Error(`Failed to fetch game user: ${err?.message}`);
 			}
 
 			let gameUser: GameUser = await gameUserRes.json();
@@ -142,23 +142,33 @@
 		</p>
 	{/if}
 
-	{#if $authState && $authState?.gameId}
 	<div id="action-box" class="mt-3 rounded-md text-center">
+		{#if $authState && $authState?.gameId}
+				<button
+					class="text-white hover:text-gray-300 focus:outline-none px-2 py-3 border font-semibold"
+					on:click={() => {
+						// Remove game id from authstate
+						let newAuthState = {
+							...$authState,
+							gameId: undefined
+						}
+
+						localStorage.setItem('authState', JSON.stringify(newAuthState));
+						window.location.reload()
+					}}
+				>
+					Leave Game
+				</button>
+		{/if}
+
 		<button
 			class="text-white hover:text-gray-300 focus:outline-none px-2 py-3 border font-semibold"
 			on:click={() => {
 				// Remove game id from authstate
-				let newAuthState = {
-					...$authState,
-					gameId: undefined
-				}
-
-				localStorage.setItem('authState', JSON.stringify(newAuthState));
-				window.location.reload()
+				logoutUser(true)
 			}}
 		>
-			Leave Game
+			Logout
 		</button>
 	</div>
-	{/if}
 {/await}
