@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { state } from '$lib/state';
 	import AuthBoundary from '../../components/AuthBoundary.svelte';
-	import ListItem from '../../components/ListItem.svelte';
-	import UnorderedList from '../../components/UnorderedList.svelte';
 	import InfoPane from '../../components/pane/InfoPane.svelte';
 	import PaneContent from '../../components/pane/PaneContent.svelte';
 	import PaneWrapper from '../../components/pane/PaneWrapper.svelte';
@@ -17,7 +15,7 @@
 			enabled: () => true
 		},
 		{
-			name: "Transactions",
+			name: "Make Transaction",
 			description: "Make a transaction on a stock!",
 			link: "/game/transactions",
 			enabled: () => $state?.gameUser?.game?.trading_enabled || false
