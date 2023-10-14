@@ -22,6 +22,7 @@
         createdAt: string;
         currentPrice: number;
         averagePrice: number;
+        allPrices: number[];
         currentGain: number;
         priceSnapshot: number;
     }
@@ -38,31 +39,15 @@
 
         let transactions: UserTransaction[] = await res.json();
 
-        const getStockPrice = (tr: UserTransaction) => {
-            let priceIndex = tr?.price_index;
-
-            if(priceIndex > ((tr?.stock?.known_prices?.length || 1) - 1)) {
-                priceIndex = ((tr?.stock?.known_prices?.length || 1) - 1)
-            }
-
-            console.log(`${priceIndex}, ${tr?.stock?.known_prices}`)
-
-            return (tr?.stock?.known_prices || [])[priceIndex];
-        }
-
         const getCurrentGain = (tr: UserTransaction) => {
-            if ((tr?.stock?.known_prices || []).length < 2) return 0;
-
-            // Get the last known price
-            let lastKnownPrice = tr.stock?.known_prices[tr?.stock.known_prices.length - 1] || getStockPrice(tr);
-            return Math.round((lastKnownPrice - getStockPrice(tr)) * tr.amount / 100);
+            return Math.round(((tr?.stock?.current_price || tr?.sale_price) - tr?.sale_price) * tr.amount / 100);
         }
 
         const getAveragePrice = (tr: UserTransaction) => {
-            if ((tr?.stock?.known_prices || []).length < 2) return Math.round(getStockPrice(tr) / 100);
+            if ((tr?.stock?.all_prices || []).length < 2) return Math.round(tr?.sale_price / 100);
 
-            let total = tr.stock?.known_prices.reduce((a, b) => a + b, 0) || 0;
-            return Math.round((total / (tr.stock?.known_prices || [0]).length) / 100);
+            let total = tr.stock?.all_prices.reduce((a, b) => a + b, 0) || 0;
+            return Math.round((total / (tr.stock?.all_prices || [0]).length) / 100);
         }
 
         let trRow: TransactionRow[] = transactions.map(tr => {
@@ -71,14 +56,15 @@
                 action: tr.action,
                 userName: tr.user?.username || 'Unknown',
                 stockId: tr.stock_id,
-                stockPrice: Math.round(getStockPrice(tr) / 100),
+                stockPrice: Math.round(tr?.sale_price / 100),
                 amount: tr.amount,
-                totalCost: Math.round(getStockPrice(tr) * tr.amount / 100),
+                totalCost: Math.round(tr?.sale_price * tr.amount / 100),
                 stockTicker: tr.stock?.ticker || 'Unknown',
                 stockCompanyName: tr.stock?.company_name || 'Unknown',
                 createdAt: new Date(tr.created_at).toLocaleString(),
                 currentPrice: Math.round((tr.stock?.current_price || 0) / 100),
                 averagePrice: getAveragePrice(tr),
+                allPrices: tr.stock?.all_prices || [],
                 currentGain: getCurrentGain(tr),
                 priceSnapshot: tr.price_index,
             }
@@ -116,6 +102,7 @@
                     <Th handler={data.handler} orderBy="stockPrice">Sale Price</Th>
                     <Th handler={data.handler} orderBy="currentPrice">Current Price</Th>
                     <Th handler={data.handler} orderBy="averagePrice">Average Price</Th>
+                    <Th handler={data.handler} orderBy="allPrices">All Prices</Th>
                     <Th handler={data.handler} orderBy="amount">Quantity</Th>
                     <Th handler={data.handler} orderBy="totalCost">Transaction Cost</Th>
                     <Th handler={data.handler} orderBy="currentGain">Potential Gain</Th>
@@ -130,6 +117,7 @@
                     <ThFilter handler={data.handler} filterBy="stockPrice"/>
                     <ThFilter handler={data.handler} filterBy="currentPrice"/>
                     <ThFilter handler={data.handler} filterBy="averagePrice"/>
+                    <ThFilter handler={data.handler} filterBy="allPrices"/>
                     <ThFilter handler={data.handler} filterBy="amount"/>
                     <ThFilter handler={data.handler} filterBy="totalCost"/>
                     <ThFilter handler={data.handler} filterBy="currentGain"/>
@@ -151,6 +139,11 @@
                         <td>${row.stockPrice}</td>
                         <td>${row.currentPrice}</td>
                         <td>${row.averagePrice}</td>
+                        <td>
+                            {#each row.allPrices as price}
+                                ${Math.round(price / 100)}
+                            {/each}
+                        </td>
                         <td>{row.amount}</td>
                         <td>
                             ${row.totalCost} {row.action == "buy" ? "Paid" : "Gained"}

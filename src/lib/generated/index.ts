@@ -58,6 +58,7 @@ export interface AssetMetadata {
     company_name: string;
     current_price: number /* int64 */;
     known_prices: number /* int64 */[];
+    all_prices: number /* int64 */[];
     created_at: string /* RFC3339 */;
     ratios?: (StockRatio | undefined)[];
   }
@@ -80,8 +81,10 @@ export interface AssetMetadata {
     game_id: string;
     user?: User;
     stock_id: string;
+    stock_ticker: string;
     stock?: Stock;
     price_index: number /* int */;
+    sale_price: number /* int64 */;
     amount: number /* int64 */;
     action: string;
     created_at: string /* RFC3339 */;
@@ -113,6 +116,7 @@ export interface AssetMetadata {
     created_at: string /* RFC3339 */;
     current_price_index: number /* int */;
     initial_balance: number /* int64 */;
+    game_number: number /* int */;
   }
   export interface GameUser {
     id: string;
