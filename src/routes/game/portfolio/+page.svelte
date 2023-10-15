@@ -43,6 +43,8 @@
 
         let transactions: UserTransaction[] = await res.json();
 
+        logger.info('XavageBB', transactions)
+
         // Get the portfolios for each stock
         //
         // To do so, we first create a list of portfolios adding and removing from the amount as we go
