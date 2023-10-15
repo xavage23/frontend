@@ -41,8 +41,15 @@
 				{
 					Name: 'Leave Game',
 					Href: () => {
-						logoutUser(true);
-						return true;
+						// Remove game id from authstate
+						let newAuthState = {
+							...$authState,
+							gameId: undefined
+						}
+
+						localStorage.setItem('authState', JSON.stringify(newAuthState));
+						window.location.reload()
+						return true
 					}
 				}
 			];
