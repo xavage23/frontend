@@ -193,15 +193,13 @@
                                     {#if pastGameCache?.[row.originGameId]?.error}
                                         <ul>
                                             <li class="text-red-500">Error: {pastGameCache?.[row.originGameId]?.error}</li>
-                                            <li>Game ID: {row.originGameId}</li>
                                         </ul>
                                     {:else}
-                                        <p>{pastGameCache?.[row.originGameId]?.game?.description} [no. {pastGameCache?.[row.originGameId]?.game?.game_number}] with id {row.originGameId}</p>
+                                        <p>{pastGameCache?.[row.originGameId]?.game?.description} [no. {pastGameCache?.[row.originGameId]?.game?.game_number}]</p>
                                     {/if}
                                 {:else}
                                     <ul>
-                                        <li>Fetching game...</li>
-                                        <li>Game ID: {row.originGameId}</li>
+                                        <li class="animate-pulse">Fetching source game...</li>
                                     </ul>
                                     
                                 {/if}
@@ -209,14 +207,8 @@
                                 
                                 <p>
                                     <span class="font-semibold">Current Game: </span>
-                                    {$state?.gameUser?.game?.description} [no. {$state?.gameUser?.game?.game_number}] with id {$state?.gameUser?.game?.id}</p>
-                                <ul>
-                                    <li class="font-semibold">Current Game</li>
-                                    <li>Game Code: {$state?.gameUser?.game?.code}</li>
-                                    <li>Game Description: {$state?.gameUser?.game?.description}</li>
-                                    <li>Game Number: {$state?.gameUser?.game?.game_number}</li>
-                                    <li>Game ID: {$state?.gameUser?.id}</li>
-                                </ul>
+                                    {$state?.gameUser?.game?.description} [no. {$state?.gameUser?.game?.game_number}]
+                                </p>
                             {/if}
                         </td>
                         <td>${centsToCurrency(row.stockPrice)}</td>
