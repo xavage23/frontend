@@ -9,6 +9,7 @@
 	import type { Readable } from 'svelte/store';
 	import { centsToCurrency, title } from '$lib/strings';
 	import Modal from '../../../../components/Modal.svelte';
+	import { getAveragePrice } from '$lib/stocks';
 
     interface TransactionRow {
         id: string;
@@ -74,22 +75,6 @@
             return ((tr?.stock?.current_price || tr?.sale_price) - tr?.sale_price) * tr.amount;
         }
 
-        const getAveragePrice = (tr: UserTransaction) => {
-            // Take the prices and add them first
-            let price = 0
-            let numberOfPrices = 0;
-            price += (tr.stock?.known_prices || []).reduce((a, b) => a + b);
-            numberOfPrices += (tr.stock?.known_prices || []).length;
-
-            // Next add prior prices
-            for(let pp of tr.stock?.prior_prices || []) {
-                price += pp.prices.reduce((a, b) => a + b);
-                numberOfPrices += pp.prices.length;
-            }
-
-            return price / numberOfPrices;
-        }
-
         let trRow: TransactionRow[] = transactions.map(tr => {
             if(tr.past && tr.origin_game_id) {
                 if(!pastGameCache[tr.origin_game_id]) {
@@ -113,6 +98,10 @@
                 }
             }
 
+            if(!tr.stock) {
+                throw new Error(`Transaction ${tr.id} has no stock`)
+            }
+
             return {
                 id: tr.id,
                 action: tr.action,
@@ -121,11 +110,11 @@
                 stockPrice: tr?.sale_price,
                 amount: tr.amount,
                 totalCost: tr?.sale_price * tr.amount,
-                stockTicker: tr.stock?.ticker || 'Unknown',
-                stockCompanyName: tr.stock?.company_name || 'Unknown',
+                stockTicker: tr.stock?.ticker,
+                stockCompanyName: tr.stock?.company_name,
                 createdAt: new Date(tr.created_at).toLocaleString(),
                 currentPrice: tr.stock?.current_price || 0,
-                averagePrice: getAveragePrice(tr),
+                averagePrice: getAveragePrice(tr.stock),
                 knownPrices: tr.stock?.known_prices || [],
                 priorPrices: tr.stock?.prior_prices || [],
                 currentGain: getCurrentGain(tr),
@@ -224,7 +213,7 @@
                                         </button>
                                     {/if}
                                 {:else}
-                                    <p>Fetching source game...</p>
+                                    <p class="animate-pulse">Fetching source game...</p>
                                 {/if}
                             {:else}
                                 <button 

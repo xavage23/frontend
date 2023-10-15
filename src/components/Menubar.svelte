@@ -22,7 +22,7 @@
 			}
 		];
 
-		if ($authState?.token)
+		if ($authState?.token) {
 			Navigation = [
 				...Navigation,
 				{
@@ -33,6 +33,20 @@
 					}
 				}
 			];
+		}
+
+		if($authState?.gameId) {
+			Navigation = [
+				...Navigation,
+				{
+					Name: 'Leave Game',
+					Href: () => {
+						logoutUser(true);
+						return true;
+					}
+				}
+			];
+		}
 	}
 
 	const onClickMenu = () => {
