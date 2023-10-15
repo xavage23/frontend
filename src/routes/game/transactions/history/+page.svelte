@@ -165,7 +165,7 @@
                     <Th handler={data.handler} orderBy="userName">User</Th>
                     <Th handler={data.handler} orderBy="priceSnapshot">Snapshot</Th>
                     <Th handler={data.handler} orderBy="isPast">From Prior Rounds</Th>
-                    <Th handler={data.handler} orderBy="originGameId">Source</Th>
+                    <Th handler={data.handler} orderBy="originGameId">Game Source</Th>
                     <Th handler={data.handler} orderBy="stockPrice">Sale Price</Th>
                     <Th handler={data.handler} orderBy="currentPrice">Current Price</Th>
                     <Th handler={data.handler} orderBy="averagePrice">Average Price</Th>
