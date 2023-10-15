@@ -22,7 +22,7 @@
     const fetchStock = async () => {
         if(fetchingNewStock) return;
         fetchingNewStock = true;
-        let res = await fetchClient(`${apiUrl}/users/${$state?.user?.id}/stocks?stock_id=${stock?.id}`);
+        let res = await fetchClient(`${apiUrl}/users/${$state?.user?.id}/stocks?stock_id=${stock?.id}&with_prior_prices=true`);
 
         if(!res.ok) {
             let err: ApiError = await res.json();
