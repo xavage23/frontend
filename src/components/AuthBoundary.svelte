@@ -110,18 +110,7 @@
 			};
 		}
 
-		setInterval(checkAuth, 1000 * 60 * 1);
-
 		return true;
-	};
-
-	const checkAuth = async () => {
-		logger.info('CheckAuth', 'dummy method called');
-
-		try {
-		} catch (err) {
-			logger.error('CheckAuth', err);
-		}
 	};
 </script>
 
