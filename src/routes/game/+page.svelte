@@ -8,12 +8,17 @@
 	import Loading from '../../components/Loading.svelte';
 	import { DataHandler, Datatable, Th, ThFilter } from '@vincjo/datatables'
 	import { centsToCurrency } from '$lib/strings';
+	import StockModal from '../../components/StockModal.svelte';
+
+	let showModal: boolean;
+	let showStock: Stock | undefined
 
     interface StockRow {
         id: string;
 		stockTicker: string;
         stockCompanyName: string;
         stockPrice: number;
+		stock: Stock | undefined;
         priceSnapshot: number;
     }
 
@@ -47,6 +52,7 @@
 				stockTicker: stock?.ticker || '',
 				stockCompanyName: stock?.company_name || '',
 				stockPrice: stock?.current_price || 0,
+				stock,
 				priceSnapshot: stocks.price_index
             }
         })
@@ -92,9 +98,15 @@
 					{#if row.id}
 						<tr>
 							<td>
-								<a class="text-blue-400 hover:text-blue-500" href={`/game/stock/${row.stockTicker}`}>
+								<button 
+									class="text-blue-400 hover:text-blue-500"
+									on:click={() => {
+										showStock = row.stock
+										showModal = true
+									}}
+								>
 									{row.stockTicker}
-								</a>
+								</button>
 							</td>
 							<td>{row.stockCompanyName}</td>
 							<td>${centsToCurrency(row.stockPrice)}</td>
@@ -107,6 +119,10 @@
 {:catch err}
     <ErrorComponent msg={err?.toString()} />
 {/await}
+
+{#if showModal && showStock}
+	<StockModal stock={showStock} bind:showModal />
+{/if}
 
 <style>
     table {
