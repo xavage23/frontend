@@ -29,6 +29,15 @@
 
 		let stocks: StockList = await res.json();
 
+		if(!stocks.stocks?.length) {
+			let stockRows: StockRow[] = [];
+			return {
+				stocks,
+				stockRows,
+				handler: new DataHandler(stockRows, { rowsPerPage: 10 })
+			}
+		}
+
         let stocksRows: StockRow[] = stocks.stocks.map(stock => {
             return {
                 id: stock?.id || '',
