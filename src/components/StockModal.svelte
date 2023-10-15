@@ -6,6 +6,7 @@
 	import { centsToCurrency } from "$lib/strings";
 	import { apiUrl } from "$lib/constants";
 	import { state } from "$lib/state";
+	import { fetchClient } from "$lib/fetch";
 
     export let stock: Stock;
     export let showModal: boolean;
@@ -21,7 +22,7 @@
     const fetchStock = async () => {
         if(fetchingNewStock) return;
         fetchingNewStock = true;
-        let res = await fetch(`${apiUrl}/users/${$state?.user?.id}/stocks?stock_id=${stock?.id}`);
+        let res = await fetchClient(`${apiUrl}/users/${$state?.user?.id}/stocks?stock_id=${stock?.id}`);
 
         if(!res.ok) {
             throw new Error(`Failed to fetch stock: ${res.statusText}`);
