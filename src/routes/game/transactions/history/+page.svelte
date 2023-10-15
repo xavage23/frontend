@@ -243,7 +243,7 @@
                         <td>${centsToCurrency(row.currentPrice)}</td>
                         <td>${centsToCurrency(row.averagePrice)}</td>
                         <td>
-                            <ul class="list-disc list-inside">
+                            <ul class="list-disc">
                                 {#each row.knownPrices as price}
                                     <li>${centsToCurrency(price)}</li>
                                 {/each}
