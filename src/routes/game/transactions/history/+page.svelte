@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { apiUrl } from '$lib/constants';
 	import { fetchClient } from '$lib/fetch';
-	import type { ApiError, UserTransaction } from '$lib/generated';
+	import type { ApiError, Game, UserTransaction } from '$lib/generated';
     import { state } from '$lib/state';
 	import Loading from '../../../../components/Loading.svelte';
     import ErrorComponent from '../../../../components/Error.svelte';
@@ -25,9 +25,31 @@
         allPrices: number[];
         currentGain: number;
         priceSnapshot: number;
+        isPast: boolean;
+        originGameId: string;
+    }
+
+    interface GameCache {
+        game?: Game;
+        error?: string;
+        fetched: boolean;
     }
 
     let rows: Readable<TransactionRow[]>;
+    let pastGameCache: { [key: string]: GameCache } = {};
+
+    const fetchGame = async (gameId: string) => {
+        let res = await fetchClient(`${apiUrl}/games/${gameId}`)
+
+        if (!res.ok) {
+            let err: ApiError = await res.json();
+            throw new Error(`Failed to fetch game: ${err?.message}`);
+        }
+
+        let game: Game = await res.json();
+        
+        return game;
+    }
 
     const fetchTransactions = async () => {
         let res = await fetchClient(`${apiUrl}/users/${$state?.user?.id}/transactions?include_users=true&with_prior_prices=true`)
@@ -51,6 +73,28 @@
         }
 
         let trRow: TransactionRow[] = transactions.map(tr => {
+            if(tr.past && tr.origin_game_id) {
+                if(!pastGameCache[tr.origin_game_id]) {
+                    pastGameCache[tr.origin_game_id] = {
+                        fetched: false,
+                    }
+
+                    fetchGame(tr.origin_game_id).catch(err => {
+                        pastGameCache[tr.origin_game_id] = {
+                            error: err?.toString() || 'Unknown error',
+                            fetched: true,
+                        }
+                    }).then(game => {
+                        if(game) {
+                            pastGameCache[tr.origin_game_id] = {
+                                game,
+                                fetched: true,
+                            }
+                        }
+                    });
+                }
+            }
+
             return {
                 id: tr.id,
                 action: tr.action,
@@ -67,6 +111,8 @@
                 allPrices: tr.stock?.all_prices || [],
                 currentGain: getCurrentGain(tr),
                 priceSnapshot: tr.price_index,
+                isPast: tr.past,
+                originGameId: tr.origin_game_id,
             }
         })
 
@@ -99,6 +145,8 @@
                     <Th handler={data.handler} orderBy="action">Action</Th>
                     <Th handler={data.handler} orderBy="userName">User</Th>
                     <Th handler={data.handler} orderBy="priceSnapshot">Price Snapshot</Th>
+                    <Th handler={data.handler} orderBy="isPast">From Prior Rounds</Th>
+                    <Th handler={data.handler} orderBy="originGameId">Source</Th>
                     <Th handler={data.handler} orderBy="stockPrice">Sale Price</Th>
                     <Th handler={data.handler} orderBy="currentPrice">Current Price</Th>
                     <Th handler={data.handler} orderBy="averagePrice">Average Price</Th>
@@ -114,6 +162,8 @@
                     <ThFilter handler={data.handler} filterBy="action"/>
                     <ThFilter handler={data.handler} filterBy="userName"/>
                     <ThFilter handler={data.handler} filterBy="priceSnapshot"/>
+                    <ThFilter handler={data.handler} filterBy="isPast"/>
+                    <ThFilter handler={data.handler} filterBy="originGameId"/>
                     <ThFilter handler={data.handler} filterBy="stockPrice"/>
                     <ThFilter handler={data.handler} filterBy="currentPrice"/>
                     <ThFilter handler={data.handler} filterBy="averagePrice"/>
@@ -136,6 +186,34 @@
                         <td>{title(row.action)}</td>
                         <td>{row.userName}</td>
                         <td>{row.priceSnapshot}</td>
+                        <td>{row.isPast ? "Yes" : "No"}</td>
+                        <td>
+                            {#if row.isPast}
+                                {#if pastGameCache?.[row.originGameId]?.fetched}
+                                    {#if pastGameCache?.[row.originGameId]?.error}
+                                        <ul>
+                                            <li class="text-red-500">Error: {pastGameCache?.[row.originGameId]?.error}</li>
+                                            <li>Game ID: {row.originGameId}</li>
+                                        </ul>
+                                    {:else}
+                                        <ul>
+                                            <li>Game Code: {pastGameCache?.[row.originGameId]?.game?.code}</li>
+                                            <li>Game Description: {pastGameCache?.[row.originGameId]?.game?.description}</li>
+                                            <li>Game Number: {new Date(pastGameCache?.[row.originGameId]?.game?.game_number || 0)?.toLocaleString()}</li>
+                                            <li>Game ID: {row.originGameId}</li>
+                                        </ul>
+                                    {/if}
+                                {:else}
+                                    <ul>
+                                        <li>Fetching game...</li>
+                                        <li>Game ID: {row.originGameId}</li>
+                                    </ul>
+                                    
+                                {/if}
+                            {:else}
+                                -
+                            {/if}
+                        </td>
                         <td>${centsToCurrency(row.stockPrice)}</td>
                         <td>${centsToCurrency(row.currentPrice)}</td>
                         <td>${centsToCurrency(row.averagePrice)}</td>
