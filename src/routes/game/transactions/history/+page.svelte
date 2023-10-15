@@ -8,6 +8,7 @@
     import { DataHandler, Datatable, Th, ThFilter } from '@vincjo/datatables'
 	import type { Readable } from 'svelte/store';
 	import { centsToCurrency, title } from '$lib/strings';
+	import Modal from '../../../../components/Modal.svelte';
 
     interface TransactionRow {
         id: string;
@@ -37,6 +38,8 @@
 
     let rows: Readable<TransactionRow[]>;
     let pastGameCache: { [key: string]: GameCache } = {};
+    let selectedSource: Game | undefined;
+    let showModal: boolean = false;
 
     const fetchGame = async (gameId: string) => {
         let res = await fetchClient(`${apiUrl}/games/${gameId}`)
@@ -191,24 +194,31 @@
                             {#if row.isPast}
                                 {#if pastGameCache?.[row.originGameId]?.fetched}
                                     {#if pastGameCache?.[row.originGameId]?.error}
-                                        <ul>
-                                            <li class="text-red-500">Error: {pastGameCache?.[row.originGameId]?.error}</li>
-                                        </ul>
+                                        <li class="font-semibold">Error: {pastGameCache?.[row.originGameId]?.error}</li>
                                     {:else}
-                                        <p>{pastGameCache?.[row.originGameId]?.game?.description} [no. {pastGameCache?.[row.originGameId]?.game?.game_number}]</p>
+                                        <button 
+                                            class="text-blue-400 hover:text-blue-500"
+                                            on:click={() => {
+                                                selectedSource = pastGameCache?.[row.originGameId]?.game
+                                                showModal = true;
+                                            }}
+                                        >
+                                            {pastGameCache?.[row.originGameId]?.game?.name}
+                                        </button>
                                     {/if}
                                 {:else}
-                                    <ul>
-                                        <li class="animate-pulse">Fetching source game...</li>
-                                    </ul>
-                                    
+                                    <p>Fetching source game...</p>
                                 {/if}
                             {:else}
-                                
-                                <p>
-                                    <span class="font-semibold">Current Game: </span>
-                                    {$state?.gameUser?.game?.description} [no. {$state?.gameUser?.game?.game_number}]
-                                </p>
+                                <button 
+                                    class="text-blue-400 hover:text-blue-500"
+                                    on:click={() => {
+                                        selectedSource = $state?.gameUser?.game
+                                        showModal = true;
+                                    }}
+                                >
+                                    {$state?.gameUser?.game?.name}
+                                </button>
                             {/if}
                         </td>
                         <td>${centsToCurrency(row.stockPrice)}</td>
@@ -234,6 +244,17 @@
             </tbody>
         </table>
     </Datatable>
+
+    {#if showModal && selectedSource}
+        <Modal bind:showModal>
+            <h1 slot="header" class="font-semibold text-2xl">{selectedSource?.name}</h1>
+            <ul>
+                <li><span class="font-semibold">Code:</span> {selectedSource?.code}</li>
+                <li><span class="font-semibold">Initial Balance:</span> ${centsToCurrency(selectedSource?.initial_balance || 0)}</li>
+                <li><span class="font-semibold">Game Number:</span> {selectedSource?.game_number}</li>
+            </ul>
+        </Modal>
+    {/if}
 {:catch err}
     <ErrorComponent msg={err?.toString()} />
 {/await}

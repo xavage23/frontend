@@ -68,7 +68,7 @@
 				{/if}
 				<div class="mb-5"></div>
 				<small class="block"><span class="font-semibold">Current Price Snapshot:</span> {$state?.gameUser?.game?.current_price_index}</small>
-				<small class="block"><span class="font-semibold">Game:</span> {$state?.gameUser?.game?.code} - {$state?.gameUser?.game?.description}</small>	
+				<small class="block"><span class="font-semibold">Game:</span> {$state?.gameUser?.game?.code} - {$state?.gameUser?.game?.name}</small>	
 				<small class="block"><span class="font-semibold">Game Created On:</span> {new Date($state?.gameUser?.game?.created_at || 0)?.toLocaleString()}</small>
 			</div>
 		</InfoPane>

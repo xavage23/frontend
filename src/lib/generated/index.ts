@@ -52,11 +52,12 @@ export interface Game {
   code: string;
   enabled: boolean;
   trading_enabled: boolean;
-  description: string;
+  name: string;
   created_at: string /* RFC3339 */;
   current_price_index: number /* int */;
   initial_balance: number /* int64 */;
   game_number: number /* int */;
+  old_stocks_carry_over: boolean;
 }
 export interface GameJoinRequest {
   game_code: string;
