@@ -42,6 +42,7 @@
         }
 
         stock = stockPot
+        fetchingNewStock = false;
 
         return stock;
     }
