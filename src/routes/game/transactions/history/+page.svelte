@@ -243,21 +243,21 @@
                         <td>${centsToCurrency(row.currentPrice)}</td>
                         <td>${centsToCurrency(row.averagePrice)}</td>
                         <td>
-                            <ul class="list-disc">
+                            <ul class="list-disc list-inside">
                                 {#each row.knownPrices as price}
                                     <li>${centsToCurrency(price)}</li>
                                 {/each}
-                                <button 
-                                    class="text-blue-400 hover:text-blue-500"
-                                    on:click={() => {
-                                        selectedRow = row;
-                                        selectedSource = undefined;
-                                        showModal = true;
-                                    }}
-                                >
-                                    History
-                                </button>
-                            </ul>
+                        </ul>
+                            <button 
+                                class="text-blue-400 hover:text-blue-500"
+                                on:click={() => {
+                                    selectedRow = row;
+                                    selectedSource = undefined;
+                                    showModal = true;
+                                }}
+                            >
+                                History
+                            </button>
                         </td>
                         <td>{row.amount}</td>
                         <td>
@@ -291,7 +291,7 @@
                 {#each selectedRow?.priorPrices as pp}
                     <li>
                         <h2 class="text-xl font-semibold">{pp.game.name}</h2>
-                        <ul class="list-disc">
+                        <ul class="list-disc list-inside">
                             {#each pp.prices as price}
                                 <li>${centsToCurrency(price)}</li>
                             {/each}
@@ -300,7 +300,7 @@
                 {/each}
                 <li>
                     <h2 class="text-xl font-semibold">Current Game</h2>
-                    <ul class="list-disc">
+                    <ul class="list-disc list-inside">
                         {#each selectedRow?.knownPrices as price}
                             <li>${centsToCurrency(price)}</li>
                         {/each}
