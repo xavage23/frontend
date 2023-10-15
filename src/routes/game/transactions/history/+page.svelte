@@ -85,7 +85,7 @@
     <title>Transaction History</title>
 </svelte:head>
 
-<h1 class="text-3xl font-semibold">Transaction History</h1>
+<h1 class="text-4xl font-semibold">Transaction History</h1>
 
 {#await fetchTransactions()}
     <Loading msg={"Loading"} disableHeader={true} />

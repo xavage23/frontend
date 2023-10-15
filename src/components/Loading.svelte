@@ -28,7 +28,7 @@
 			<stop offset="1%" stop-color="#42d179" stop-opacity="1" />
 			<stop offset="80%" stop-color="#42d179" stop-opacity="0" />
 		</linearGradient>
-		<title id="___panelLoad">Loading the panel, please wait</title>
+		<title id="___panelLoad">Loading the game, please wait</title>
 	</svg>
 	<p class="mt-3 text-4xl font-semibold text-center dark:text-white">{msg}</p>
 </section>

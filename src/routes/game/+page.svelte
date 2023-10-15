@@ -66,7 +66,7 @@
     <title>Stocks</title>
 </svelte:head>
 
-<h1 class="text-3xl font-semibold">Stocks</h1>
+<h1 class="text-4xl font-semibold">Stocks</h1>
 
 {#await getStockList()}
     <Loading msg={"Loading"} disableHeader={true} />

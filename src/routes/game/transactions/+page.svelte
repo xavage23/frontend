@@ -78,7 +78,7 @@
     <title>Transactions</title>
 </svelte:head>
 
-<h1 class="text-3xl font-semibold">Transactions</h1>
+<h1 class="text-4xl font-semibold">Transactions</h1>
 
 {#await getTransactionMeta()}
     <Loading msg={"Loading"} disableHeader={true} />
