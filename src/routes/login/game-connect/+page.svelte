@@ -90,7 +90,7 @@
 			game_code: inputtedGameCode,
 		}
 
-		let res = await fetchClient(`${apiUrl}/users/${$authState?.userId}/join_game`, {
+		let res = await fetchClient(`${apiUrl}/users/${$authState?.userId}/games`, {
 			method: "POST",
 			body: JSON.stringify(jr),
 		})
