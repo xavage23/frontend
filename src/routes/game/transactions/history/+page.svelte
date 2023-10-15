@@ -196,12 +196,7 @@
                                             <li>Game ID: {row.originGameId}</li>
                                         </ul>
                                     {:else}
-                                        <ul>
-                                            <li>Game Code: {pastGameCache?.[row.originGameId]?.game?.code}</li>
-                                            <li>Game Description: {pastGameCache?.[row.originGameId]?.game?.description}</li>
-                                            <li>Game Number: {pastGameCache?.[row.originGameId]?.game?.game_number}</li>
-                                            <li>Game ID: {row.originGameId}</li>
-                                        </ul>
+                                        <p>{pastGameCache?.[row.originGameId]?.game?.description} [no. {pastGameCache?.[row.originGameId]?.game?.game_number}] with id {row.originGameId}</p>
                                     {/if}
                                 {:else}
                                     <ul>
@@ -211,6 +206,10 @@
                                     
                                 {/if}
                             {:else}
+                                
+                                <p>
+                                    <span class="font-semibold">Current Game: </span>
+                                    {$state?.gameUser?.game?.description} [no. {$state?.gameUser?.game?.game_number}] with id {$state?.gameUser?.game?.id}</p>
                                 <ul>
                                     <li class="font-semibold">Current Game</li>
                                     <li>Game Code: {$state?.gameUser?.game?.code}</li>
