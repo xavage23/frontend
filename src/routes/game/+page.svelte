@@ -96,7 +96,7 @@
 							<td>
 								<a 
 									class="text-blue-400 hover:text-blue-500"
-									href={`/stocks/${row?.stock?.id}`}
+									href={`/game/stocks/${row?.stock?.id}`}
 								>
 									{row.stockTicker}
 								</a>
