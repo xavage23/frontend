@@ -62,7 +62,7 @@
     }
 
     const fetchTransactions = async () => {
-        let res = await fetchClient(`${apiUrl}/users/${$state?.user?.id}/transactions?include_users=true&with_prior_prices=true`)
+        let res = await fetchClient(`${apiUrl}/users/${$state?.user?.id}/transactions?include_users=true`)
 
         if (!res.ok) {
             let err: ApiError = await res.json();

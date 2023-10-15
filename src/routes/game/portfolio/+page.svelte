@@ -34,7 +34,7 @@
     let showModal: boolean = false;
 
     const fetchTransactions = async () => {
-        let res = await fetchClient(`${apiUrl}/users/${$state?.user?.id}/transactions?only_me=true&with_prior_prices=true`)
+        let res = await fetchClient(`${apiUrl}/users/${$state?.user?.id}/transactions?only_me=true`)
 
         if (!res.ok) {
             let err: ApiError = await res.json();
