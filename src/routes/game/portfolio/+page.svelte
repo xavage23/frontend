@@ -79,7 +79,9 @@
             }
         }
 
-        let trRow: PortfolioRow[] = portfolios.map(p => {
+        let trRow: PortfolioRow[] = portfolios
+        .filter(p => p.amount != 0) // Only show stocks that one owns a quantity of
+        .map(p => {
             return {
                 stockId: p.stock.id,
                 amount: p.amount,
