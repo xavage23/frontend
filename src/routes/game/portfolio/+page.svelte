@@ -57,9 +57,11 @@
             if(!portfolio) {
                 portfolios.push({
                     stock: uts.stock,
-                    amount: uts.amount,
+                    amount: 0,
                 })
-            } else {
+            }
+
+            if(portfolio) {
                 switch (uts.action) {
                     case "buy":
                         portfolio.amount += uts.amount;
