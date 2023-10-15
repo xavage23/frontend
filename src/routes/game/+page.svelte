@@ -8,10 +8,6 @@
 	import Loading from '../../components/Loading.svelte';
 	import { DataHandler, Datatable, Th, ThFilter } from '@vincjo/datatables'
 	import { centsToCurrency } from '$lib/strings';
-	import StockModal from '../../components/StockModal.svelte';
-
-	let showModal: boolean;
-	let showStock: Stock | undefined
 
     interface StockRow {
         id: string;
@@ -98,15 +94,12 @@
 					{#if row.id}
 						<tr>
 							<td>
-								<button 
+								<a 
 									class="text-blue-400 hover:text-blue-500"
-									on:click={() => {
-										showStock = row.stock
-										showModal = true
-									}}
+									href={`/stocks/${row?.stock?.id}`}
 								>
 									{row.stockTicker}
-								</button>
+								</a>
 							</td>
 							<td>{row.stockCompanyName}</td>
 							<td>${centsToCurrency(row.stockPrice)}</td>
@@ -119,10 +112,6 @@
 {:catch err}
     <ErrorComponent msg={err?.toString()} />
 {/await}
-
-{#if showModal && showStock}
-	<StockModal stock={showStock} bind:showModal />
-{/if}
 
 <style>
     table {
