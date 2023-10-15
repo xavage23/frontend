@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Stock, StockList } from "$lib/generated";
+	import type { ApiError, Stock, StockList } from "$lib/generated";
 	import logger from "$lib/logger";
 	import { onMount } from "svelte";
 	import Modal from "./Modal.svelte";
@@ -25,7 +25,8 @@
         let res = await fetchClient(`${apiUrl}/users/${$state?.user?.id}/stocks?stock_id=${stock?.id}`);
 
         if(!res.ok) {
-            throw new Error(`Failed to fetch stock: ${res.statusText}`);
+            let err: ApiError = await res.json();
+            throw new Error(`Failed to fetch stock: ${err?.message}`);
         }
 
         let sl: StockList = await res.json();
