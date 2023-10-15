@@ -7,7 +7,7 @@
     import ErrorComponent from '../../../../components/Error.svelte';
     import { DataHandler, Datatable, Th, ThFilter } from '@vincjo/datatables'
 	import type { Readable } from 'svelte/store';
-	import { title } from '$lib/strings';
+	import { centsToCurrency, title } from '$lib/strings';
 
     interface TransactionRow {
         id: string;
@@ -40,14 +40,14 @@
         let transactions: UserTransaction[] = await res.json();
 
         const getCurrentGain = (tr: UserTransaction) => {
-            return Math.round(((tr?.stock?.current_price || tr?.sale_price) - tr?.sale_price) * tr.amount / 100);
+            return ((tr?.stock?.current_price || tr?.sale_price) - tr?.sale_price) * tr.amount;
         }
 
         const getAveragePrice = (tr: UserTransaction) => {
-            if ((tr?.stock?.all_prices || []).length < 2) return Math.round(tr?.sale_price / 100);
+            if ((tr?.stock?.all_prices || []).length < 2) return tr?.sale_price;
 
             let total = tr.stock?.all_prices.reduce((a, b) => a + b, 0) || 0;
-            return Math.round((total / (tr.stock?.all_prices || [0]).length) / 100);
+            return total / (tr.stock?.all_prices || [0]).length;
         }
 
         let trRow: TransactionRow[] = transactions.map(tr => {
@@ -56,13 +56,13 @@
                 action: tr.action,
                 userName: tr.user?.username || 'Unknown',
                 stockId: tr.stock_id,
-                stockPrice: Math.round(tr?.sale_price / 100),
+                stockPrice: tr?.sale_price,
                 amount: tr.amount,
-                totalCost: Math.round(tr?.sale_price * tr.amount / 100),
+                totalCost: tr?.sale_price * tr.amount,
                 stockTicker: tr.stock?.ticker || 'Unknown',
                 stockCompanyName: tr.stock?.company_name || 'Unknown',
                 createdAt: new Date(tr.created_at).toLocaleString(),
-                currentPrice: Math.round((tr.stock?.current_price || 0) / 100),
+                currentPrice: tr.stock?.current_price || 0,
                 averagePrice: getAveragePrice(tr),
                 allPrices: tr.stock?.all_prices || [],
                 currentGain: getCurrentGain(tr),
@@ -136,21 +136,21 @@
                         <td>{title(row.action)}</td>
                         <td>{row.userName}</td>
                         <td>{row.priceSnapshot}</td>
-                        <td>${row.stockPrice}</td>
-                        <td>${row.currentPrice}</td>
-                        <td>${row.averagePrice}</td>
+                        <td>${centsToCurrency(row.stockPrice)}</td>
+                        <td>${centsToCurrency(row.currentPrice)}</td>
+                        <td>${centsToCurrency(row.averagePrice)}</td>
                         <td>
                             <ul class="list-disc">
                                 {#each row.allPrices as price}
-                                <li>${Math.round(price / 100)}</li>
+                                    <li>${centsToCurrency(price)}</li>
                                 {/each}
                             </ul>
                         </td>
                         <td>{row.amount}</td>
                         <td>
-                            ${row.totalCost} {row.action == "buy" ? "Paid" : "Gained"}
+                            ${centsToCurrency(row.totalCost)} {row.action == "buy" ? "Paid" : "Gained"}
                         </td>
-                        <td>${row.currentGain}</td>
+                        <td>${centsToCurrency(row.currentGain)}</td>
                         <td>
                             {row.createdAt}
                         </td>

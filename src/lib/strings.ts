@@ -17,3 +17,11 @@ export function title(str: string) {
 		return t.toUpperCase();
 	});
 }
+
+export function roundDecimals(num: number) {
+	return num.toFixed(2)
+}
+
+export function centsToCurrency(num: number) {
+	return roundDecimals(num / 100);
+}

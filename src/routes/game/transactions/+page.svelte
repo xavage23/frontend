@@ -4,6 +4,7 @@
 	import { fetchClient } from "$lib/fetch";
 	import type { ApiError, CreateTransaction, StockList } from "$lib/generated";
 	import { state } from "$lib/state";
+	import { centsToCurrency } from "$lib/strings";
 	import { error, success } from "$lib/toast";
     import ErrorComponent from '../../../components/Error.svelte';
 	import Loading from '../../../components/Loading.svelte';
@@ -125,14 +126,14 @@
 
     {#if selectedAction && selectedStockId && selectedAmount}
         {#if selectedAction == "buy"}
-            <p class="text-white">You need <span class="font-semibold">${Math.round(stockValue(data.stocks, selectedStockId, selectedAmount) / 100)}</span> to perform this transaction</p>
+            <p class="text-white">You need <span class="font-semibold">${centsToCurrency(stockValue(data.stocks, selectedStockId, selectedAmount))}</span> to perform this transaction</p>
             <p class="text-white">You will receive <span class="font-semibold">{selectedAmount}</span> share(s) from this transaction</p>
         {:else if selectedAction == "sell"}
             <p class="text-white">You need <span class="font-semibold">{selectedAmount}</span> share(s) to perform this transaction</p>
-            <p class="text-white">You will receive <span class="font-semibold">${Math.round(stockValue(data.stocks, selectedStockId, selectedAmount) / 100)}</span> from this transaction</p>
+            <p class="text-white">You will receive <span class="font-semibold">${centsToCurrency(stockValue(data.stocks, selectedStockId, selectedAmount))}</span> from this transaction</p>
         {/if}
 
-        <p><span class="font-semibold">Estimated Resultant Balance:</span> ${Math.round(resultantBalance(data.stocks, selectedStockId, selectedAmount, selectedAction) / 100)}</p>
+        <p><span class="font-semibold">Estimated Resultant Balance:</span> ${centsToCurrency(resultantBalance(data.stocks, selectedStockId, selectedAmount, selectedAction))}</p>
 
         {#if resultantBalance(data.stocks, selectedStockId, selectedAmount, selectedAction) < 0}
             <p class="text-red-500">You may not have enough money to perform this transaction</p>

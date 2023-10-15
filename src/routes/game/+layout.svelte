@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { state } from '$lib/state';
+	import { centsToCurrency } from '$lib/strings';
 	import AuthBoundary from '../../components/AuthBoundary.svelte';
 	import InfoPane from '../../components/pane/InfoPane.svelte';
 	import PaneContent from '../../components/pane/PaneContent.svelte';
@@ -59,11 +60,11 @@
 			</div>
 
 			<div class="mt-4">
-				<p class="font-semibold">Current Balance: ${Math.round(($state?.gameUser?.current_balance || 0) / 100)}</p>
-				<p class="font-semibold">Initial Balance: ${Math.round(($state?.gameUser?.initial_balance || 0) / 100)}</p>
-				<p class="font-semibold">Net Profit/Loss: ${Math.round((($state?.gameUser?.current_balance || 0) - ($state?.gameUser?.initial_balance || 0)) / 100)}</p>
+				<p class="font-semibold">Current Balance: ${centsToCurrency($state?.gameUser?.current_balance || 0)}</p>
+				<p class="font-semibold">Initial Balance: ${centsToCurrency($state?.gameUser?.initial_balance || 0)}</p>
+				<p class="font-semibold">Net Profit/Loss: ${centsToCurrency(($state?.gameUser?.current_balance || 0) - ($state?.gameUser?.initial_balance || 0))}</p>
 				{#if $state?.gameUser?.initial_balance != $state?.gameUser?.game?.initial_balance}
-				<small class="block"><span class="font-semibold text-red-400">Applied Penalty/Extra:</span> ${Math.round((($state?.gameUser?.game?.initial_balance || 0) - ($state?.gameUser?.initial_balance || 0)) / 100)}</small>
+				<small class="block"><span class="font-semibold text-red-400">Applied Penalty/Extra:</span> ${centsToCurrency(($state?.gameUser?.game?.initial_balance || 0) - ($state?.gameUser?.initial_balance || 0))}</small>
 				{/if}
 				<div class="mb-5"></div>
 				<small class="block"><span class="font-semibold">Current Price Snapshot:</span> {$state?.gameUser?.game?.current_price_index}</small>

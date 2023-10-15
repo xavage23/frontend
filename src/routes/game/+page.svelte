@@ -7,6 +7,7 @@
 	import ErrorComponent from '../../components/Error.svelte';
 	import Loading from '../../components/Loading.svelte';
 	import { DataHandler, Datatable, Th, ThFilter } from '@vincjo/datatables'
+	import { centsToCurrency } from '$lib/strings';
 
     interface StockRow {
         id: string;
@@ -33,7 +34,7 @@
                 id: stock?.id || '',
 				stockTicker: stock?.ticker || '',
 				stockCompanyName: stock?.company_name || '',
-				stockPrice: Math.round((stock?.current_price || 0) / 100),
+				stockPrice: stock?.current_price || 0,
 				priceSnapshot: stocks.price_index
             }
         })
@@ -84,7 +85,7 @@
 								</a>
 							</td>
 							<td>{row.stockCompanyName}</td>
-							<td>${row.stockPrice}</td>
+							<td>${centsToCurrency(row.stockPrice)}</td>
 							<td>{row.priceSnapshot}</td>
 						</tr>
 					{/if}
