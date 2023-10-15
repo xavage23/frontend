@@ -60,6 +60,7 @@
 			</div>
 
 			<div class="mt-4">
+				<p class="font-semibold">Username: {$state?.user?.username}</p>
 				<p class="font-semibold">Current Balance: ${centsToCurrency($state?.gameUser?.current_balance || 0)}</p>
 				<p class="font-semibold">Initial Balance: ${centsToCurrency($state?.gameUser?.initial_balance || 0)}</p>
 				<p class="font-semibold">Net Profit/Loss: ${centsToCurrency(($state?.gameUser?.current_balance || 0) - ($state?.gameUser?.initial_balance || 0))}</p>
