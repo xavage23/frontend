@@ -51,11 +51,7 @@
 <Modal bind:showModal>
     <h1 slot="header" class="font-semibold text-3xl">{stock?.ticker}</h1>
     {#if fetchingNewStock}
-        {#await fetchStock()}
-            <p class="animate-pulse">We're currently fetching some more information on this stock. Certain information may be unavailable until this is complete</p>
-        {:catch err}
-            <p class="text-red-500">{err.message}</p>
-        {/await}
+        <p class="animate-pulse">We're currently fetching some more information on this stock. Certain information may be unavailable until this is complete</p>
     {/if}
 
     <h2 class="text-2xl">Ratios</h2>
