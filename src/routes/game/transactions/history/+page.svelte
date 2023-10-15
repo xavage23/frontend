@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { apiUrl } from '$lib/constants';
 	import { fetchClient } from '$lib/fetch';
-	import type { ApiError, Game, UserTransaction } from '$lib/generated';
+	import type { ApiError, Game, PriorPricePoint, UserTransaction } from '$lib/generated';
     import { state } from '$lib/state';
 	import Loading from '../../../../components/Loading.svelte';
     import ErrorComponent from '../../../../components/Error.svelte';
@@ -23,7 +23,8 @@
         createdAt: string;
         currentPrice: number;
         averagePrice: number;
-        allPrices: number[];
+        priorPrices: PriorPricePoint[];
+        knownPrices: number[];
         currentGain: number;
         priceSnapshot: number;
         isPast: boolean;
@@ -39,9 +40,14 @@
     let rows: Readable<TransactionRow[]>;
     let pastGameCache: { [key: string]: GameCache } = {};
     let selectedSource: Game | undefined;
+    let selectedRow: TransactionRow | undefined;
     let showModal: boolean = false;
 
     const fetchGame = async (gameId: string) => {
+        if(pastGameCache?.[gameId]?.game && !pastGameCache?.[gameId]?.error && pastGameCache?.[gameId]?.fetched) {
+            return pastGameCache[gameId]?.game;
+        }
+
         let res = await fetchClient(`${apiUrl}/games/${gameId}`)
 
         if (!res.ok) {
@@ -69,10 +75,19 @@
         }
 
         const getAveragePrice = (tr: UserTransaction) => {
-            if ((tr?.stock?.all_prices || []).length < 2) return tr?.sale_price;
+            // Take the prices and add them first
+            let price = 0
+            let numberOfPrices = 0;
+            price += (tr.stock?.known_prices || []).reduce((a, b) => a + b);
+            numberOfPrices += (tr.stock?.known_prices || []).length;
 
-            let total = tr.stock?.all_prices.reduce((a, b) => a + b, 0) || 0;
-            return total / (tr.stock?.all_prices || [0]).length;
+            // Next add prior prices
+            for(let pp of tr.stock?.prior_prices || []) {
+                price += pp.prices.reduce((a, b) => a + b);
+                numberOfPrices += pp.prices.length;
+            }
+
+            return price / numberOfPrices;
         }
 
         let trRow: TransactionRow[] = transactions.map(tr => {
@@ -111,7 +126,8 @@
                 createdAt: new Date(tr.created_at).toLocaleString(),
                 currentPrice: tr.stock?.current_price || 0,
                 averagePrice: getAveragePrice(tr),
-                allPrices: tr.stock?.all_prices || [],
+                knownPrices: tr.stock?.known_prices || [],
+                priorPrices: tr.stock?.prior_prices || [],
                 currentGain: getCurrentGain(tr),
                 priceSnapshot: tr.price_index,
                 isPast: tr.past,
@@ -153,7 +169,7 @@
                     <Th handler={data.handler} orderBy="stockPrice">Sale Price</Th>
                     <Th handler={data.handler} orderBy="currentPrice">Current Price</Th>
                     <Th handler={data.handler} orderBy="averagePrice">Average Price</Th>
-                    <Th handler={data.handler} orderBy="allPrices">All Prices</Th>
+                    <Th handler={data.handler} orderBy="knownPrices">Price History</Th> <!--In reality, this includes prior prices-->
                     <Th handler={data.handler} orderBy="amount">Quantity</Th>
                     <Th handler={data.handler} orderBy="totalCost">Transaction Cost</Th>
                     <Th handler={data.handler} orderBy="currentGain">Potential Gain</Th>
@@ -170,7 +186,7 @@
                     <ThFilter handler={data.handler} filterBy="stockPrice"/>
                     <ThFilter handler={data.handler} filterBy="currentPrice"/>
                     <ThFilter handler={data.handler} filterBy="averagePrice"/>
-                    <ThFilter handler={data.handler} filterBy="allPrices"/>
+                    <ThFilter handler={data.handler} filterBy="knownPrices"/>
                     <ThFilter handler={data.handler} filterBy="amount"/>
                     <ThFilter handler={data.handler} filterBy="totalCost"/>
                     <ThFilter handler={data.handler} filterBy="currentGain"/>
@@ -200,6 +216,7 @@
                                             class="text-blue-400 hover:text-blue-500"
                                             on:click={() => {
                                                 selectedSource = pastGameCache?.[row.originGameId]?.game
+                                                selectedRow = undefined;
                                                 showModal = true;
                                             }}
                                         >
@@ -214,6 +231,7 @@
                                     class="text-blue-400 hover:text-blue-500"
                                     on:click={() => {
                                         selectedSource = $state?.gameUser?.game
+                                        selectedRow = undefined;
                                         showModal = true;
                                     }}
                                 >
@@ -226,9 +244,19 @@
                         <td>${centsToCurrency(row.averagePrice)}</td>
                         <td>
                             <ul class="list-disc">
-                                {#each row.allPrices as price}
+                                {#each row.knownPrices as price}
                                     <li>${centsToCurrency(price)}</li>
                                 {/each}
+                                <button 
+                                    class="text-blue-400 hover:text-blue-500"
+                                    on:click={() => {
+                                        selectedRow = row;
+                                        selectedSource = undefined;
+                                        showModal = true;
+                                    }}
+                                >
+                                    History
+                                </button>
                             </ul>
                         </td>
                         <td>{row.amount}</td>
@@ -252,6 +280,32 @@
                 <li><span class="font-semibold">Code:</span> {selectedSource?.code}</li>
                 <li><span class="font-semibold">Initial Balance:</span> ${centsToCurrency(selectedSource?.initial_balance || 0)}</li>
                 <li><span class="font-semibold">Game Number:</span> {selectedSource?.game_number}</li>
+            </ul>
+        </Modal>
+    {/if}
+
+    {#if showModal && selectedRow}
+        <Modal bind:showModal>
+            <h1 slot="header" class="font-semibold text-2xl">{selectedRow?.stockTicker} - {selectedRow?.stockCompanyName} Price History</h1>
+            <ul>
+                {#each selectedRow?.priorPrices as pp}
+                    <li>
+                        <h2 class="text-xl font-semibold">{pp.game.name}</h2>
+                        <ul class="list-disc">
+                            {#each pp.prices as price}
+                                <li>${centsToCurrency(price)}</li>
+                            {/each}
+                        </ul>
+                    </li>
+                {/each}
+                <li>
+                    <h2 class="text-xl font-semibold">Current Game</h2>
+                    <ul class="list-disc">
+                        {#each selectedRow?.knownPrices as price}
+                            <li>${centsToCurrency(price)}</li>
+                        {/each}
+                    </ul>
+                </li>
             </ul>
         </Modal>
     {/if}

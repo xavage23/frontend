@@ -83,6 +83,10 @@ export interface StockRatio {
   name: string;
   ratio: number /* float64 */;
 }
+export interface PriorPricePoint {
+  prices: number /* int64 */[];
+  game: Game;
+}
 export interface Stock {
   id: string;
   game_id: string;
@@ -90,7 +94,7 @@ export interface Stock {
   company_name: string;
   current_price: number /* int64 */;
   known_prices: number /* int64 */[];
-  all_prices: number /* int64 */[];
+  prior_prices: PriorPricePoint[];
   created_at: string /* RFC3339 */;
   ratios?: (StockRatio | undefined)[];
 }
