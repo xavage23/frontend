@@ -30,11 +30,14 @@
 		let stocks: StockList = await res.json();
 
 		if(!stocks.stocks?.length) {
-			let stockRows: StockRow[] = [];
+			let stocksRows: StockRow[] = [];
+			const handler = new DataHandler(stocksRows, { rowsPerPage: 10 })
+        	rows = handler.getRows()
+			stocks.stocks = []
 			return {
 				stocks,
-				stockRows,
-				handler: new DataHandler(stockRows, { rowsPerPage: 10 })
+				stocksRows,
+				handler
 			}
 		}
 
