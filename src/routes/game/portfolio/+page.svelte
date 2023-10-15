@@ -10,6 +10,7 @@
 	import { centsToCurrency, title } from '$lib/strings';
 	import Modal from '../../../components/Modal.svelte';
 	import { getAveragePrice } from '$lib/stocks';
+	import logger from '$lib/logger';
 
     interface PortfolioRow {
         stockId: string;
@@ -55,6 +56,7 @@
             let portfolio = portfolios.find(p => p.stock.id == uts.stock_id);
 
             if(!portfolio) {
+                logger.info('XavageBB', `Creating portfolio for ${uts.stock.ticker}`)
                 portfolios.push({
                     stock: uts.stock,
                     amount: 0,
@@ -62,6 +64,7 @@
             }
 
             if(portfolio) {
+                logger.info('XavageBB', `Updating portfolio for ${uts.stock.ticker} by ${uts.amount} with action ${uts.action}`)
                 switch (uts.action) {
                     case "buy":
                         portfolio.amount += uts.amount;
