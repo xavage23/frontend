@@ -199,7 +199,7 @@
                                         <ul>
                                             <li>Game Code: {pastGameCache?.[row.originGameId]?.game?.code}</li>
                                             <li>Game Description: {pastGameCache?.[row.originGameId]?.game?.description}</li>
-                                            <li>Game Number: {new Date(pastGameCache?.[row.originGameId]?.game?.game_number || 0)?.toLocaleString()}</li>
+                                            <li>Game Number: {pastGameCache?.[row.originGameId]?.game?.game_number}</li>
                                             <li>Game ID: {row.originGameId}</li>
                                         </ul>
                                     {/if}
@@ -215,7 +215,7 @@
                                     <li class="font-semibold">Current Game</li>
                                     <li>Game Code: {$state?.gameUser?.game?.code}</li>
                                     <li>Game Description: {$state?.gameUser?.game?.description}</li>
-                                    <li>Game Number: {new Date($state?.gameUser?.game?.game_number || 0)?.toLocaleString()}</li>
+                                    <li>Game Number: {$state?.gameUser?.game?.game_number}</li>
                                     <li>Game ID: {$state?.gameUser?.id}</li>
                                 </ul>
                             {/if}
