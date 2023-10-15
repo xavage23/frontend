@@ -63,6 +63,7 @@
                     stock: uts.stock,
                     amount: 0,
                 })
+                portfolio = portfolios.find(p => p.stock.id == uts.stock_id)
             }
 
             if(portfolio) {
