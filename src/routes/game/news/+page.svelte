@@ -94,6 +94,7 @@
                             class="text-blue-400 hover:text-blue-500"
                             on:click={() => {
                                 selectedNewsRow = row;
+                                selectedPriorPricesRow = undefined;
                                 showModal = true;
                             }}
                         >
@@ -111,6 +112,7 @@
                                 class="text-blue-400 hover:text-blue-500"
                                 on:click={() => {
                                     selectedPriorPricesRow = row?.stock;
+                                    selectedNewsRow = undefined;
                                     showModal = true;
                                 }}
                             >
