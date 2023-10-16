@@ -76,7 +76,7 @@
         }
 
         let trRow: TransactionRow[] = transactions.map(tr => {
-            if(tr.past && tr.origin_game_id) {
+            if(tr.origin_game_id != tr.game_id) {
                 if(!pastGameCache[tr.origin_game_id]) {
                     pastGameCache[tr.origin_game_id] = {
                         fetched: false,
@@ -119,7 +119,7 @@
                 priorPrices: tr.stock?.prior_prices || [],
                 currentGain: getCurrentGain(tr),
                 priceSnapshot: tr.price_index,
-                isPast: tr.past,
+                isPast: tr.origin_game_id != tr.id,
                 originGameId: tr.origin_game_id,
             }
         })
