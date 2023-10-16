@@ -180,14 +180,17 @@
 				{#each data?.availableGames as avg}
 					{#if showAllAvailableGames || (avg?.game?.enabled && avg?.can_join)}
 						<section class="rounded-md border mt-3 p-3 hover:bg-slate-800">
-							<h3 class="text-xl">{avg?.game?.name}</h3>
-							<ul class="list-inside">
-								<li><span class="font-semibold">Code:</span> {avg?.game?.code}</li>
-								<li><span class="font-semibold">Created At:</span> {new Date(avg?.game?.created_at || 0).toLocaleString()}</li>
-								<li><span class="font-semibold">Trading Enabled:</span> {avg?.game?.trading_enabled}</li>
-								<li><span class="font-semibold">Enabled:</span> {avg?.game?.enabled}</li>
-								<li><span class="font-semibold">Can Join:</span> {avg?.can_join}</li>
-							</ul>
+							<details>
+								<summary class="hover:cursor-pointer">Details</summary>
+								<h3 class="text-xl">{avg?.game?.name}</h3>
+								<ul class="list-inside">
+									<li><span class="font-semibold">Code:</span> {avg?.game?.code}</li>
+									<li><span class="font-semibold">Created At:</span> {new Date(avg?.game?.created_at || 0).toLocaleString()}</li>
+									<li><span class="font-semibold">Trading Enabled:</span> {avg?.game?.trading_enabled}</li>
+									<li><span class="font-semibold">Enabled:</span> {avg?.game?.enabled}</li>
+									<li><span class="font-semibold">Can Join:</span> {avg?.can_join}</li>
+								</ul>
+							</details>
 							<div class="mt-2 mb-2"></div>
 							{#if !avg?.game?.enabled}
 								<p class="text-red-500">This game is not enabled yet.</p>
