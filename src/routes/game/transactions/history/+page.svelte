@@ -154,7 +154,7 @@
                     <Th handler={data.handler} orderBy="userName">User</Th>
                     <Th handler={data.handler} orderBy="priceSnapshot">Snapshot</Th>
                     <Th handler={data.handler} orderBy="isPast">From Prior Rounds</Th>
-                    <Th handler={data.handler} orderBy="originGameId">Game Source</Th>
+                    <Th handler={data.handler} orderBy="createdAt">Game Source</Th>
                     <Th handler={data.handler} orderBy="stockPrice">Sale Price</Th>
                     <Th handler={data.handler} orderBy="currentPrice">Current Price</Th>
                     <Th handler={data.handler} orderBy="averagePrice">Average Price</Th>
@@ -171,7 +171,7 @@
                     <ThFilter handler={data.handler} filterBy="userName"/>
                     <ThFilter handler={data.handler} filterBy="priceSnapshot"/>
                     <ThFilter handler={data.handler} filterBy="isPast"/>
-                    <ThFilter handler={data.handler} filterBy="originGameId"/>
+                    <ThFilter handler={data.handler} filterBy="createdAt"/>
                     <ThFilter handler={data.handler} filterBy="stockPrice"/>
                     <ThFilter handler={data.handler} filterBy="currentPrice"/>
                     <ThFilter handler={data.handler} filterBy="averagePrice"/>
