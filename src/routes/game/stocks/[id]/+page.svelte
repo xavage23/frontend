@@ -34,16 +34,20 @@
     <h2 class="text-2xl">Ratios</h2>
     <p>Dummy ratios here</p>
 
-    <div class="mb-3"></div>
+    <div class="mb-5"></div>
 
     <h2 class="text-2xl">Description</h2>
 
-    <p class="text-xl">{stock?.description}</p>
+    <p>{stock?.description}</p>
+
+    <div class="mb-3"></div>
 
     <ul>
         <li>Company Name: {stock?.company_name}</li>
         <li>Current Price: ${centsToCurrency(stock?.current_price)}</li>
     </ul>
+
+    <div class="mb-5"></div>
 
     <p class="text-2xl">Price History</p>
 
