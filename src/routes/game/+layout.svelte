@@ -35,7 +35,7 @@
 		},
 		{
 			name: "Game News",
-			description: "View a history of all transactions!",
+			description: "View the latest investment news!",
 			link: "/game/news",
 			enabled: () => true
 		},
