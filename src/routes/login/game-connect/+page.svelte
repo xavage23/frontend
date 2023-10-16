@@ -142,7 +142,7 @@
 			id="gamecode"
 			minlength={0}
 			label="Game Code"
-			description="Ask an on-site member if you don't have a game code yet."
+			description="If you have been asked to use a specific game code, then enter it here"
 			placeholder="Code"
 			bind:value={inputtedGameCode}
 			showErrors={false}
@@ -164,9 +164,12 @@
 			{#await fetchAvailableGames()}
 				<h2 id="avgame" aria-live="polite" class="text-2xl animate-pulse">Loading available game list...</h2>
 			{:then data}
-				<h2 id="avgame" aria-live="polite" class="text-2xl mb-2">Available Games</h2>
+				<div>
+					<h2 id="avgame" aria-live="polite" class="text-2xl mb-1">Available Games</h2>
+					<p class="mb-2">Otherwise, choose the game you wish to play here</p>
+				</div>
 				{#each data?.availableGames as avg}
-					<section class="rounded-md border mt-3 p-3 hover:bg-slate-600">
+					<section class="rounded-md border mt-3 p-3 hover:bg-slate-700">
 						<h3 class="text-xl">{avg?.game?.name}</h3>
 						<ul class="list-inside">
 							<li><span class="font-semibold">Code:</span> {avg?.game?.code}</li>
