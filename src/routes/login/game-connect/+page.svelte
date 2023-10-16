@@ -181,10 +181,12 @@
 					{#if showAllAvailableGames || (avg?.game?.enabled && avg?.can_join)}
 						<section class="rounded-md border mt-3 p-3 hover:bg-slate-800">
 							<h3 class="text-xl">{avg?.game?.name}</h3>
+							<ul>
+								<li><span class="font-semibold">Code:</span> {avg?.game?.code}</li>
+							</ul>
 							<details>
 								<summary class="hover:cursor-pointer">Details</summary>
-								<ul class="list-inside">
-									<li><span class="font-semibold">Code:</span> {avg?.game?.code}</li>
+								<ul class="list-disc list-inside">
 									<li><span class="font-semibold">Created At:</span> {new Date(avg?.game?.created_at || 0).toLocaleString()}</li>
 									<li><span class="font-semibold">Trading Enabled:</span> {avg?.game?.trading_enabled}</li>
 									<li><span class="font-semibold">Enabled:</span> {avg?.game?.enabled}</li>
