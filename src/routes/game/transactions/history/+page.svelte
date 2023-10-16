@@ -49,7 +49,7 @@
             return pastGameCache[gameId]?.game;
         }
 
-        let res = await fetchClient(`${apiUrl}/games/${gameId}`)
+        let res = await fetchClient(`${apiUrl}/users/${$state?.user?.id}/games/${gameId}`)
 
         if (!res.ok) {
             let err: ApiError = await res.json();
