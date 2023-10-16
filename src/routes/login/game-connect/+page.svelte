@@ -164,9 +164,9 @@
 			{#await fetchAvailableGames()}
 				<h2 id="avgame" aria-live="polite" class="text-2xl animate-pulse">Loading available game list...</h2>
 			{:then data}
-				<h2 id="avgame" aria-live="polite" class="text-2xl">Available Games</h2>
+				<h2 id="avgame" aria-live="polite" class="text-2xl mb-2">Available Games</h2>
 				{#each data?.availableGames as avg}
-					<section class="rounded-md border">
+					<section class="rounded-md border mt-3">
 						<h3 class="text-xl">{avg?.game?.name}</h3>
 						<ul class="list-inside">
 							<li><span class="font-semibold">Code:</span> {avg?.game?.code}</li>
