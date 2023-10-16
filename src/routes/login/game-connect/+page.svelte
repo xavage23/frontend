@@ -166,34 +166,36 @@
 			{:then data}
 				<h2 id="avgame" aria-live="polite" class="text-2xl">Available Games</h2>
 				{#each data?.availableGames as avg}
-					<h3 class="text-xl">{avg?.game?.name}</h3>
-					<ul class="list-inside">
-						<li><span class="font-semibold">Code:</span> {avg?.game?.code}</li>
-						<li><span class="font-semibold">Created At:</span> {new Date(avg?.game?.created_at || 0).toLocaleString()}</li>
-						<li><span class="font-semibold">Trading Enabled:</span> {avg?.game?.trading_enabled}</li>
-						<li><span class="font-semibold">Enabled:</span> {avg?.game?.enabled}</li>
-						<li><span class="font-semibold">Can Join:</span> {avg?.can_join}</li>
-					</ul>
-					{#if !avg?.game?.enabled}
-						<p class="text-red-500">This game is not enabled yet.</p>
-					{:else if !avg?.can_join}
-						<p class="text-red-500">You cannot join this game.</p>
-					{:else}
-						<ButtonReact
-							color={Color.Themable}
-							icon={'mdi:key'}
-							text={'Connect'}
-							states={{
-								loading: 'Activating game...',
-								success: 'Successfully activated game!',
-								error: 'Failed to fetch this game!'
-							}}
-							onClick={() => {
-								inputtedGameCode = avg?.game?.code || '';
-								return gameConnect();
-							}}
-						/>
-					{/if}
+					<section class="rounded-md border">
+						<h3 class="text-xl">{avg?.game?.name}</h3>
+						<ul class="list-inside">
+							<li><span class="font-semibold">Code:</span> {avg?.game?.code}</li>
+							<li><span class="font-semibold">Created At:</span> {new Date(avg?.game?.created_at || 0).toLocaleString()}</li>
+							<li><span class="font-semibold">Trading Enabled:</span> {avg?.game?.trading_enabled}</li>
+							<li><span class="font-semibold">Enabled:</span> {avg?.game?.enabled}</li>
+							<li><span class="font-semibold">Can Join:</span> {avg?.can_join}</li>
+						</ul>
+						{#if !avg?.game?.enabled}
+							<p class="text-red-500">This game is not enabled yet.</p>
+						{:else if !avg?.can_join}
+							<p class="text-red-500">You cannot join this game.</p>
+						{:else}
+							<ButtonReact
+								color={Color.Themable}
+								icon={'mdi:key'}
+								text={'Connect'}
+								states={{
+									loading: 'Activating game...',
+									success: 'Successfully activated game!',
+									error: 'Failed to fetch this game!'
+								}}
+								onClick={() => {
+									inputtedGameCode = avg?.game?.code || '';
+									return gameConnect();
+								}}
+							/>
+						{/if}
+					</section>
 				{/each}
 			{:catch e}
 				<ErrorComponent msg={e?.toString() || 'Unknown error'} />
