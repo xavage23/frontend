@@ -27,7 +27,7 @@
     let selectedPriorPricesRow: Stock | undefined;
 
     const fetchNews = async () => {
-        let res = await fetchClient(`${apiUrl}/users/${$state?.user?.id}/news`)
+        let res = await fetchClient(`${apiUrl}/users/${$state?.user?.id}/news?with_stocks=true`)
 
         if (!res.ok) {
             let err: ApiError = await res.json();
