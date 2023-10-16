@@ -183,7 +183,7 @@
 							<ButtonReact
 								color={Color.Themable}
 								icon={'mdi:key'}
-								text={'Connect'}
+								text={`Join ${avg?.game?.name}`}
 								states={{
 									loading: 'Activating game...',
 									success: 'Successfully activated game!',
