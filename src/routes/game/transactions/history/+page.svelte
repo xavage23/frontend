@@ -186,7 +186,7 @@
                 {#each $rows as row}
                     <tr>
                         <td>
-                            <a class="text-blue-400 hover:text-blue-500" href={`/game/stocks/${row.stockId}`}>
+                            <a class="text-blue-400 hover:text-blue-500" href={`/game/stocks/${row.stockTicker}`}>
                                 {row.stockTicker}
                             </a>
                         </td>
