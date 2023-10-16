@@ -119,7 +119,7 @@
                 priorPrices: tr.stock?.prior_prices || [],
                 currentGain: getCurrentGain(tr),
                 priceSnapshot: tr.price_index,
-                isPast: tr.origin_game_id != tr.id,
+                isPast: tr.origin_game_id != tr.game_id,
                 originGameId: tr.origin_game_id,
             }
         })
