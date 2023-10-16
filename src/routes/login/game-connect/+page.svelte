@@ -11,10 +11,12 @@
 	import { fetchClient } from '$lib/fetch';
 	import { apiUrl } from '$lib/constants';
 	import type { ApiError, AvailableGame, GameJoinRequest, GameJoinResponse, User } from '$lib/generated';
+	import BoolInput from '../../../components/inputs/BoolInput.svelte';
 
 	let msg: string = 'Loading game selection screen...';
 
 	let inputtedGameCode: string = '';
+	let showAllAvailableGames: boolean = false;
 
 	const redirect = () => {
 		let searchParams = new URLSearchParams(window.location.search);
@@ -168,37 +170,46 @@
 					<h2 id="avgame" aria-live="polite" class="text-2xl mb-1">Available Games</h2>
 					<p class="mb-2">Otherwise, choose the game you wish to play here</p>
 				</div>
+				<BoolInput 
+					id="show-all-available-games"
+					label="Show All Available Games"
+					bind:value={showAllAvailableGames}
+					disabled={false}
+					description="Show all available games including games you may not be able to join"
+				/>
 				{#each data?.availableGames as avg}
-					<section class="rounded-md border mt-3 p-3 hover:bg-slate-700">
-						<h3 class="text-xl">{avg?.game?.name}</h3>
-						<ul class="list-inside">
-							<li><span class="font-semibold">Code:</span> {avg?.game?.code}</li>
-							<li><span class="font-semibold">Created At:</span> {new Date(avg?.game?.created_at || 0).toLocaleString()}</li>
-							<li><span class="font-semibold">Trading Enabled:</span> {avg?.game?.trading_enabled}</li>
-							<li><span class="font-semibold">Enabled:</span> {avg?.game?.enabled}</li>
-							<li><span class="font-semibold">Can Join:</span> {avg?.can_join}</li>
-						</ul>
-						{#if !avg?.game?.enabled}
-							<p class="text-red-500">This game is not enabled yet.</p>
-						{:else if !avg?.can_join}
-							<p class="text-red-500">You cannot join this game.</p>
-						{:else}
-							<ButtonReact
-								color={Color.Themable}
-								icon={'mdi:send'}
-								text={`Join ${avg?.game?.name}`}
-								states={{
-									loading: 'Activating game...',
-									success: 'Successfully activated game!',
-									error: 'Failed to fetch this game!'
-								}}
-								onClick={() => {
-									inputtedGameCode = avg?.game?.code || '';
-									return gameConnect();
-								}}
-							/>
-						{/if}
-					</section>
+					{#if showAllAvailableGames || (avg?.game?.enabled && avg?.can_join)}
+						<section class="rounded-md border mt-3 p-3 hover:bg-slate-800">
+							<h3 class="text-xl">{avg?.game?.name}</h3>
+							<ul class="list-inside">
+								<li><span class="font-semibold">Code:</span> {avg?.game?.code}</li>
+								<li><span class="font-semibold">Created At:</span> {new Date(avg?.game?.created_at || 0).toLocaleString()}</li>
+								<li><span class="font-semibold">Trading Enabled:</span> {avg?.game?.trading_enabled}</li>
+								<li><span class="font-semibold">Enabled:</span> {avg?.game?.enabled}</li>
+								<li><span class="font-semibold">Can Join:</span> {avg?.can_join}</li>
+							</ul>
+							{#if !avg?.game?.enabled}
+								<p class="text-red-500">This game is not enabled yet.</p>
+							{:else if !avg?.can_join}
+								<p class="text-red-500">You cannot join this game.</p>
+							{:else}
+								<ButtonReact
+									color={Color.Themable}
+									icon={'mdi:send'}
+									text={`Join ${avg?.game?.name}`}
+									states={{
+										loading: 'Activating game...',
+										success: 'Successfully activated game!',
+										error: 'Failed to fetch this game!'
+									}}
+									onClick={() => {
+										inputtedGameCode = avg?.game?.code || '';
+										return gameConnect();
+									}}
+								/>
+							{/if}
+						</section>
+					{/if}
 				{/each}
 			{:catch e}
 				<ErrorComponent msg={e?.toString() || 'Unknown error'} />
