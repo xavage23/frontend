@@ -166,7 +166,7 @@
 			{:then data}
 				<h2 id="avgame" aria-live="polite" class="text-2xl mb-2">Available Games</h2>
 				{#each data?.availableGames as avg}
-					<section class="rounded-md border mt-3">
+					<section class="rounded-md border mt-3 p-3 hover:bg-slate-600">
 						<h3 class="text-xl">{avg?.game?.name}</h3>
 						<ul class="list-inside">
 							<li><span class="font-semibold">Code:</span> {avg?.game?.code}</li>
