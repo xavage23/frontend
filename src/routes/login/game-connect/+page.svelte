@@ -188,6 +188,7 @@
 								<li><span class="font-semibold">Enabled:</span> {avg?.game?.enabled}</li>
 								<li><span class="font-semibold">Can Join:</span> {avg?.can_join}</li>
 							</ul>
+							<div class="mt-2 mb-2"></div>
 							{#if !avg?.game?.enabled}
 								<p class="text-red-500">This game is not enabled yet.</p>
 							{:else if !avg?.can_join}
