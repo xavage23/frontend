@@ -182,7 +182,7 @@
 						{:else}
 							<ButtonReact
 								color={Color.Themable}
-								icon={'mdi:key'}
+								icon={'mdi:send'}
 								text={`Join ${avg?.game?.name}`}
 								states={{
 									loading: 'Activating game...',
