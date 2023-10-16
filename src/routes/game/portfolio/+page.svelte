@@ -55,25 +55,24 @@
                 throw new Error(`Transaction ${uts.id} has no stock`);
             }
 
-            let portfolio = portfolios.find(p => p.stock.id == uts.stock_id);
+            let portfolioIndex = portfolios.findIndex(p => p.stock.id == uts.stock_id);
 
-            if(!portfolio) {
+            if(portfolioIndex < 0) {
                 logger.info('XavageBB', `Creating portfolio for ${uts.stock.ticker}`)
-                portfolios.push({
+                portfolioIndex = portfolios.push({
                     stock: uts.stock,
                     amount: 0,
-                })
-                portfolio = portfolios.find(p => p.stock.id == uts.stock_id)
+                }) - 1
             }
 
-            if(portfolio) {
+            if(portfolioIndex >= 0) {
                 logger.info('XavageBB', `Updating portfolio for ${uts.stock.ticker} by ${uts.amount} with action ${uts.action}`)
                 switch (uts.action) {
                     case "buy":
-                        portfolio.amount += uts.amount;
+                        portfolios[portfolioIndex].amount += uts.amount;
                         break;
                     case "sell":
-                        portfolio.amount -= uts.amount;
+                        portfolios[portfolioIndex].amount -= uts.amount;
                         break;
                 }
             }
