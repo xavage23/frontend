@@ -28,7 +28,8 @@
             throw new Error(`Failed to fetch transactions: ${err?.message}`);
         }
 
-        let lbs: Leaderboard[] = await res.json();
+        let lbsMap: { [key: string]: Leaderboard } = await res.json();
+        let lbs = Object.values(lbsMap);
 
         logger.info('XavageBB', lbs)
 
