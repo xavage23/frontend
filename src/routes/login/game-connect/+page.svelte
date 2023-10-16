@@ -180,9 +180,9 @@
 				{#each data?.availableGames as avg}
 					{#if showAllAvailableGames || (avg?.game?.enabled && avg?.can_join)}
 						<section class="rounded-md border mt-3 p-3 hover:bg-slate-800">
+							<h3 class="text-xl">{avg?.game?.name}</h3>
 							<details>
 								<summary class="hover:cursor-pointer">Details</summary>
-								<h3 class="text-xl">{avg?.game?.name}</h3>
 								<ul class="list-inside">
 									<li><span class="font-semibold">Code:</span> {avg?.game?.code}</li>
 									<li><span class="font-semibold">Created At:</span> {new Date(avg?.game?.created_at || 0).toLocaleString()}</li>
