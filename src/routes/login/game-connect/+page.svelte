@@ -160,7 +160,7 @@
 			onClick={gameConnect}
 		/>
 
-		<div id="available-games-box">
+		<div id="available-games-box" class="mt-10">
 			{#await fetchAvailableGames()}
 				<h2 id="avgame" aria-live="polite" class="text-2xl animate-pulse">Loading available game list...</h2>
 			{:then data}
