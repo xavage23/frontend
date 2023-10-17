@@ -29,40 +29,17 @@
         currentGain: number;
         priceSnapshot: number;
         isPast: boolean;
-        originGameId: string;
-    }
-
-    interface GameCache {
-        game?: Game;
-        error?: string;
-        fetched: boolean;
+        originGame?: Game;
+        originGameName: string;
     }
 
     let rows: Readable<TransactionRow[]>;
-    let pastGameCache: { [key: string]: GameCache } = {};
     let selectedSource: Game | undefined;
     let selectedRow: TransactionRow | undefined;
     let showModal: boolean = false;
 
-    const fetchGame = async (gameId: string) => {
-        if(pastGameCache?.[gameId]?.game && !pastGameCache?.[gameId]?.error && pastGameCache?.[gameId]?.fetched) {
-            return pastGameCache[gameId]?.game;
-        }
-
-        let res = await fetchClient(`${apiUrl}/users/${$state?.user?.id}/games/${gameId}`)
-
-        if (!res.ok) {
-            let err: ApiError = await res.json();
-            throw new Error(`Failed to fetch game: ${err?.message}`);
-        }
-
-        let game: Game = await res.json();
-        
-        return game;
-    }
-
     const fetchTransactions = async () => {
-        let res = await fetchClient(`${apiUrl}/users/${$state?.user?.id}/transactions?include_users=true`)
+        let res = await fetchClient(`${apiUrl}/users/${$state?.user?.id}/transactions?include_users=true&include_origin_game=true`)
 
         if (!res.ok) {
             let err: ApiError = await res.json();
@@ -76,28 +53,6 @@
         }
 
         let trRow: TransactionRow[] = transactions.map(tr => {
-            if(tr.origin_game_id != tr.game_id) {
-                if(!pastGameCache[tr.origin_game_id]) {
-                    pastGameCache[tr.origin_game_id] = {
-                        fetched: false,
-                    }
-
-                    fetchGame(tr.origin_game_id).catch(err => {
-                        pastGameCache[tr.origin_game_id] = {
-                            error: err?.toString() || 'Unknown error',
-                            fetched: true,
-                        }
-                    }).then(game => {
-                        if(game) {
-                            pastGameCache[tr.origin_game_id] = {
-                                game,
-                                fetched: true,
-                            }
-                        }
-                    });
-                }
-            }
-
             if(!tr.stock) {
                 throw new Error(`Transaction ${tr.id} has no stock`)
             }
@@ -120,7 +75,8 @@
                 currentGain: getCurrentGain(tr),
                 priceSnapshot: tr.price_index,
                 isPast: tr.origin_game_id != tr.game_id,
-                originGameId: tr.origin_game_id,
+                originGame: tr.origin_game,
+                originGameName: tr.origin_game?.name || 'Unknown',
             }
         })
 
@@ -154,7 +110,7 @@
                     <Th handler={data.handler} orderBy="userName">User</Th>
                     <Th handler={data.handler} orderBy="priceSnapshot">Snapshot</Th>
                     <Th handler={data.handler} orderBy="isPast">From Prior Rounds</Th>
-                    <Th handler={data.handler} orderBy="createdAt">Game Source</Th>
+                    <Th handler={data.handler} orderBy="originGameName">Game Source</Th>
                     <Th handler={data.handler} orderBy="stockPrice">Sale Price</Th>
                     <Th handler={data.handler} orderBy="currentPrice">Current Price</Th>
                     <Th handler={data.handler} orderBy="averagePrice">Average Price</Th>
@@ -171,7 +127,7 @@
                     <ThFilter handler={data.handler} filterBy="userName"/>
                     <ThFilter handler={data.handler} filterBy="priceSnapshot"/>
                     <ThFilter handler={data.handler} filterBy="isPast"/>
-                    <ThFilter handler={data.handler} filterBy="createdAt"/>
+                    <ThFilter handler={data.handler} filterBy="originGameName"/>
                     <ThFilter handler={data.handler} filterBy="stockPrice"/>
                     <ThFilter handler={data.handler} filterBy="currentPrice"/>
                     <ThFilter handler={data.handler} filterBy="averagePrice"/>
@@ -196,37 +152,16 @@
                         <td>{row.priceSnapshot}</td>
                         <td>{row.isPast ? "Yes" : "No"}</td>
                         <td>
-                            {#if row.isPast}
-                                {#if pastGameCache?.[row.originGameId]?.fetched}
-                                    {#if pastGameCache?.[row.originGameId]?.error}
-                                        <li class="font-semibold">Error: {pastGameCache?.[row.originGameId]?.error}</li>
-                                    {:else}
-                                        <button 
-                                            class="text-blue-400 hover:text-blue-500"
-                                            on:click={() => {
-                                                selectedSource = pastGameCache?.[row.originGameId]?.game
-                                                selectedRow = undefined;
-                                                showModal = true;
-                                            }}
-                                        >
-                                            {pastGameCache?.[row.originGameId]?.game?.name}
-                                        </button>
-                                    {/if}
-                                {:else}
-                                    <p class="animate-pulse">Fetching source game...</p>
-                                {/if}
-                            {:else}
-                                <button 
-                                    class="text-blue-400 hover:text-blue-500"
-                                    on:click={() => {
-                                        selectedSource = $state?.gameUser?.game
-                                        selectedRow = undefined;
-                                        showModal = true;
-                                    }}
-                                >
-                                    {$state?.gameUser?.game?.name}
-                                </button>
-                            {/if}
+                            <button 
+                                class="text-blue-400 hover:text-blue-500"
+                                on:click={() => {
+                                    selectedSource = row?.originGame
+                                    selectedRow = undefined;
+                                    showModal = true;
+                                }}
+                            >
+                                {row?.originGameName}
+                            </button>
                         </td>
                         <td>${centsToCurrency(row.stockPrice)}</td>
                         <td>${centsToCurrency(row.currentPrice)}</td>
