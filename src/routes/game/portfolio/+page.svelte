@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { apiUrl } from '$lib/constants';
 	import { fetchClient } from '$lib/fetch';
-	import type { ApiError, PriorPricePoint, Stock, UserTransaction } from '$lib/generated';
+	import type { ApiError, Portfolio, PriorPricePoint, Stock, UserTransaction } from '$lib/generated';
     import { state } from '$lib/state';
 	import Loading from '../../../components/Loading.svelte';
     import ErrorComponent from '../../../components/Error.svelte';
@@ -34,61 +34,39 @@
     let showModal: boolean = false;
 
     const fetchTransactions = async () => {
-        let res = await fetchClient(`${apiUrl}/users/${$state?.user?.id}/transactions?only_me=true`)
+        let res = await fetchClient(`${apiUrl}/users/${$state?.user?.id}/games/${$state?.gameUser?.game_id}/portfolio`)
 
         if (!res.ok) {
             let err: ApiError = await res.json();
-            throw new Error(`Failed to fetch transactions: ${err?.message}`);
+            throw new Error(`Failed to fetch portfolio: ${err?.message}`);
         }
 
-        let transactions: UserTransaction[] = await res.json();
+        let portfolioData: { [key: string]: Portfolio } = await res.json();
+        let portfolios = Object.values(portfolioData);
 
-        logger.info('XavageBB', transactions)
+        logger.info('XavageBB', portfolios)
 
-        // Get the portfolios for each stock
-        //
-        // To do so, we first create a list of portfolios adding and removing from the amount as we go
-        let portfolios: PortfolioStock[] = []
-
-        for(let uts of transactions) {
-            if(!uts.stock) {
-                throw new Error(`Transaction ${uts.id} has no stock`);
+        const getAmountOfPortfolio = (p: Portfolio) => {
+            let amount = 0;
+            for(let [_, value] of Object.entries(p.amount)) {
+                amount += value?.amount || 0;
             }
 
-            let portfolioIndex = portfolios.findIndex(p => p.stock.id == uts.stock_id);
-
-            if(portfolioIndex < 0) {
-                logger.info('XavageBB', `Creating portfolio for ${uts.stock.ticker}`)
-                portfolioIndex = portfolios.push({
-                    stock: uts.stock,
-                    amount: 0,
-                }) - 1
-            }
-
-            if(portfolioIndex >= 0) {
-                logger.info('XavageBB', `Updating portfolio for ${uts.stock.ticker} by ${uts.amount} with action ${uts.action}`)
-                switch (uts.action) {
-                    case "buy":
-                        portfolios[portfolioIndex].amount += uts.amount;
-                        break;
-                    case "sell":
-                        portfolios[portfolioIndex].amount -= uts.amount;
-                        break;
-                }
-            }
+            return amount;
         }
 
         let trRow: PortfolioRow[] = portfolios
-        .filter(p => p.amount != 0) // Only show stocks that one owns a quantity of
+        .filter(p => getAmountOfPortfolio(p) != 0) // Only show stocks that one owns a quantity of
         .map(p => {
+            let pAmount = getAmountOfPortfolio(p)
             return {
-                stockId: p.stock.id,
-                amount: p.amount,
-                value: p?.stock?.current_price * p.amount,
+                stockId: p.stock?.id || '',
+                amount: pAmount,
+                value: (p?.stock?.current_price || 0) * pAmount,
                 stockTicker: p.stock?.ticker || 'Unknown',
                 stockCompanyName: p.stock?.company_name || 'Unknown',
                 currentPrice: p.stock?.current_price || 0,
-                averagePrice: getAveragePrice(p.stock),
+                averagePrice: p.stock ? getAveragePrice(p.stock) : 0,
                 knownPrices: p.stock?.known_prices || [],
                 priorPrices: p.stock?.prior_prices || [],
             }
@@ -98,7 +76,7 @@
         rows = handler.getRows()
 
         return {
-            transactions,
+            portfolios,
             trRow,
             handler,
         }

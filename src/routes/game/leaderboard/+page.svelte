@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { apiUrl } from '$lib/constants';
 	import { fetchClient } from '$lib/fetch';
-	import type { ApiError, Leaderboard, UserTransaction } from '$lib/generated';
+	import type { ApiError, Leaderboard } from '$lib/generated';
     import { state } from '$lib/state';
 	import Loading from '../../../components/Loading.svelte';
     import ErrorComponent from '../../../components/Error.svelte';
@@ -44,6 +44,7 @@
         })
 
         const handler = new DataHandler(lbRows, { rowsPerPage: 10 })
+        handler.sortDesc("currentBalance")
         rows = handler.getRows()
 
         return {
