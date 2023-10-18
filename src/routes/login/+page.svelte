@@ -3,12 +3,12 @@
 	import ButtonReact from '../../components/button/ButtonReact.svelte';
 	import { error } from '$lib/toast';
 	import { authState, type AuthState } from '$lib/authState';
-	import { onMount } from 'svelte';
 	import { goto as gotoOnce } from '$app/navigation';
 	import { Color } from '../../components/button/colors';
 	import { fetchClient } from '$lib/fetch';
 	import { apiUrl } from '$lib/constants';
 	import type { ApiError, UserLogin, UserLoginResponse } from '$lib/generated';
+	import logger from '$lib/logger';
 
 	// Safari needs this patch here
 	let navigating: boolean = false;
@@ -18,11 +18,30 @@
 		return await gotoOnce(url);
 	}
 
-	onMount(async () => {
-		if ($authState) {
-			await goto('/');
+	const checkLogin = async () => {
+		let authStateData = localStorage.getItem('authState');
+		
+		logger.info("Login", authStateData)
+
+		if(authStateData) {
+			try {
+				let json: AuthState = JSON.parse(authStateData);
+				$authState = json;
+
+				let authCheckRes = await fetchClient(`${apiUrl}/users/${$authState?.userId}/check_auth`, {
+					method: "POST"
+				})
+
+				if(authCheckRes.ok) {
+					await goto('/');
+				}
+			} catch (err) {
+				logger.error('XavageBB', 'Failed to load auth data from localStorage', err);
+			}
+		} else {
+			logger.info("Login", "Not redirecting user")
 		}
-	});
+	}
 
 	let username: string;
 	let password: string;

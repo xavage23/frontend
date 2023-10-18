@@ -29,7 +29,7 @@
 	const loadGameConnect = async () => {
 		let authStateData = localStorage.getItem('authState');
 		
-		logger.info("MFA", authStateData)
+		logger.info("GameConnect", authStateData)
 
 		if (!authStateData) {
 			await goto(`/login?redirect=${redirect()}`);
@@ -58,7 +58,7 @@
 				return;
 			}
 		} catch (e) {
-			logger.error('XavageBB', 'Failed to load auth data from localStorage');
+			logger.error('XavageBB', 'Failed to load auth data from localStorage', e);
 			await goto(`/login?redirect=${redirect()}`);
 			return;
 		}
