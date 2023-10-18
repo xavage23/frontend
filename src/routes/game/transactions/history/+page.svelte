@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { apiUrl } from '$lib/constants';
 	import { fetchClient } from '$lib/fetch';
-	import type { ApiError, Game, PriorPricePoint, UserTransaction } from '$lib/generated';
+	import type { ApiError, Game, PriorPricePoint, TransactionList, UserTransaction } from '$lib/generated';
     import { state } from '$lib/state';
 	import Loading from '../../../../components/Loading.svelte';
     import ErrorComponent from '../../../../components/Error.svelte';
@@ -46,37 +46,50 @@
             throw new Error(`Failed to fetch transactions: ${err?.message}`);
         }
 
-        let transactions: UserTransaction[] = await res.json();
+        let transactions: TransactionList = await res.json();
 
-        const getCurrentGain = (tr: UserTransaction) => {
-            return ((tr?.stock?.current_price || tr?.sale_price) - tr?.sale_price) * tr.amount;
+        const getCurrentGain = (transactions: TransactionList, tr: UserTransaction) => {
+            let stock = transactions?.stocks?.[tr.stock_id]
+            return ((stock?.current_price || tr?.sale_price) - tr?.sale_price) * tr.amount;
         }
 
-        let trRow: TransactionRow[] = transactions.map(tr => {
-            if(!tr.stock) {
-                throw new Error(`Transaction ${tr.id} has no stock`)
+        let trRow: TransactionRow[] = transactions?.transactions?.map(tr => {
+            if(!tr) {
+                throw new Error(`Transaction ${tr} is undefined`)
+            }
+            
+            let stock = transactions?.stocks?.[tr?.stock_id || '']
+            let user = transactions?.users?.[tr?.user_id || '']
+            if(!stock) {
+                throw new Error(`Transaction ${tr?.id} has no stock`)
             }
 
+            if(!user) {
+                throw new Error(`Transaction ${tr?.id} has no user`)
+            }
+
+            let originGame = transactions?.games?.[tr?.origin_game_id || '']
+
             return {
-                id: tr.id,
-                action: tr.action,
-                userName: tr.user?.username || 'Unknown',
-                stockId: tr.stock_id,
-                stockPrice: tr?.sale_price,
-                amount: tr.amount,
-                totalCost: tr?.sale_price * tr.amount,
-                stockTicker: tr.stock?.ticker,
-                stockCompanyName: tr.stock?.company_name,
+                id: tr?.id || 'Unknown',
+                action: tr?.action || 'Unknown',
+                userName: user?.username || 'Unknown',
+                stockId: tr?.stock_id || 'Unknown',
+                stockPrice: tr?.sale_price || 0,
+                amount: tr?.amount || 0,
+                totalCost: (tr?.sale_price || 0) * (tr?.amount || 0),
+                stockTicker: stock?.ticker || 'Unknown',
+                stockCompanyName: stock?.company_name || 'Unknown',
                 createdAt: new Date(tr.created_at).toLocaleString(),
-                currentPrice: tr.stock?.current_price || 0,
-                averagePrice: getAveragePrice(tr.stock),
-                knownPrices: tr.stock?.known_prices || [],
-                priorPrices: tr.stock?.prior_prices || [],
-                currentGain: getCurrentGain(tr),
+                currentPrice: stock?.current_price || 0,
+                averagePrice: getAveragePrice(stock),
+                knownPrices: stock?.known_prices || [],
+                priorPrices: stock?.prior_prices || [],
+                currentGain: getCurrentGain(transactions, tr),
                 priceSnapshot: tr.price_index,
                 isPast: tr.origin_game_id != tr.game_id,
-                originGame: tr.origin_game,
-                originGameName: tr.origin_game?.name || 'Unknown',
+                originGame: originGame,
+                originGameName: originGame?.name || 'Unknown',
             }
         })
 
