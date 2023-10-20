@@ -55,7 +55,7 @@
 </script>
 
 <svelte:head>
-    <title>Portfolio</title>
+    <title>Leaderboard</title>
 </svelte:head>
 
 <h1 class="text-4xl font-semibold">Leaderboard</h1>
