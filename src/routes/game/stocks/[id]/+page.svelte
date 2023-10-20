@@ -8,7 +8,6 @@
 	import Loading from "../../../../components/Loading.svelte";
     import ErrorComponent from "../../../../components/Error.svelte";
 
-
     const fetchStock = async () => {
         let res = await fetchClient(`${apiUrl}/users/${$state?.user?.id}/stocks/${$page.params.id}`);
 
@@ -32,7 +31,18 @@
 {:then stock}
     <h1 class="font-semibold text-3xl">{stock?.ticker}</h1>
     <h2 class="text-2xl">Ratios</h2>
-    <p>Dummy ratios here</p>
+   
+    <ul class="list-disc list-inside">
+        {#each (stock?.ratios || []) as ratio}
+            <li>
+                <span class="font-semibold">{ratio?.name}:</span> {ratio?.value} 
+
+                {#if ratio?.value_text}
+                    <span class="italic">({ratio?.value_text})</span>
+                {/if}
+            </li>
+        {/each}    
+    </ul>
 
     <div class="mb-5"></div>
 
