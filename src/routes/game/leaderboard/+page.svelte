@@ -8,7 +8,6 @@
     import { DataHandler, Datatable, Th, ThFilter } from '@vincjo/datatables'
 	import type { Readable } from 'svelte/store';
 	import { centsToCurrency, title } from '$lib/strings';
-	import { getAveragePrice } from '$lib/stocks';
 	import logger from '$lib/logger';
 
     interface LeaderboardRow {
@@ -59,7 +58,7 @@
     <title>Portfolio</title>
 </svelte:head>
 
-<h1 class="text-4xl font-semibold">Portfolio</h1>
+<h1 class="text-4xl font-semibold">Leaderboard</h1>
 
 {#await fetchTransactions()}
     <Loading msg={"Loading"} disableHeader={true} />
