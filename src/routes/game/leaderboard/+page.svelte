@@ -15,6 +15,7 @@
         username: string;
         initialBalance: number;
         currentBalance: number;
+        shortingValue: number;
     }
 
     let rows: Readable<LeaderboardRow[]>;
@@ -39,11 +40,13 @@
                 username: lb?.user?.username || '',
                 initialBalance: lb?.initial_balance || 0,
                 currentBalance: lb?.current_balance || 0,
+                shortingValue: lb?.short_amount || 0,
             }
         })
 
         const handler = new DataHandler(lbRows, { rowsPerPage: 10 })
         handler.sortDesc("currentBalance")
+        handler.sortAsc("shortingValue")
         rows = handler.getRows()
 
         return {
@@ -70,11 +73,13 @@
                     <Th handler={data.handler} orderBy="username">Username</Th>
                     <Th handler={data.handler} orderBy="initialBalance">Initial Balance</Th>
                     <Th handler={data.handler} orderBy="currentBalance">Current Balance</Th>
+                    <Th handler={data.handler} orderBy="shortingValue">Shorting Value</Th>
                 </tr>
                 <tr>
                     <ThFilter handler={data.handler} filterBy="username"/>
                     <ThFilter handler={data.handler} filterBy="initialBalance"/>
                     <ThFilter handler={data.handler} filterBy="currentBalance"/>
+                    <ThFilter handler={data.handler} filterBy="shortingValue"/>
                 </tr>
             </thead>
             <tbody>
@@ -85,6 +90,7 @@
                         </td>
                         <td>${centsToCurrency(row.initialBalance)}</td>
                         <td>${centsToCurrency(row.currentBalance)}</td>
+                        <td>${centsToCurrency(row.shortingValue)}</td>
                     </tr>
                 {/each}
             </tbody>

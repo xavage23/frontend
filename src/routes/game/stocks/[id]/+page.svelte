@@ -35,7 +35,7 @@
     <ul class="list-disc list-inside">
         {#each (stock?.ratios || []) as ratio}
             <li>
-                <span class="font-semibold">{ratio?.name}:</span> {ratio?.value} 
+                <span class="font-semibold">{ratio?.name}:</span> {ratio?.value?.toFixed(2)} 
 
                 {#if ratio?.value_text}
                     <span class="italic">({ratio?.value_text})</span>
