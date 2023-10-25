@@ -178,7 +178,7 @@
 					description="Show all available games including games you may not be able to join"
 				/>
 				{#each data?.availableGames as avg}
-					{#if showAllAvailableGames || (avg?.game?.enabled && avg?.can_join)}
+					{#if showAllAvailableGames || (avg?.is_enabled && avg?.can_join)}
 						<section class="rounded-md border mt-3 p-3 hover:bg-slate-800">
 							<h3 class="text-xl">{avg?.game?.name}</h3>
 							<ul>
