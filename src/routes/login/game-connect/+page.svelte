@@ -189,12 +189,16 @@
 								<ul class="list-disc list-inside">
 									<li><span class="font-semibold">Created At:</span> {new Date(avg?.game?.created_at || 0).toLocaleString()}</li>
 									<li><span class="font-semibold">Trading Enabled:</span> {avg?.game?.trading_enabled}</li>
-									<li><span class="font-semibold">Enabled:</span> {avg?.game?.enabled}</li>
+									{#if avg?.game?.enabled}
+										<li><span class="font-semibold">Enabled At/On:</span> {new Date(avg?.game?.enabled).toLocaleDateString()}</li>
+									{:else}
+										<li><span class="font-semibold">Enabled At/On:</span> Not enabled</li>
+									{/if}
 									<li><span class="font-semibold">Can Join:</span> {avg?.can_join}</li>
 								</ul>
 							</details>
 							<div class="mt-2 mb-2"></div>
-							{#if !avg?.game?.enabled}
+							{#if !avg?.is_enabled}
 								<p class="text-red-500">This game is not enabled yet.</p>
 							{:else if !avg?.can_join}
 								<p class="text-red-500">You cannot join this game.</p>
