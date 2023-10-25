@@ -190,7 +190,7 @@
 									<li><span class="font-semibold">Created At:</span> {new Date(avg?.game?.created_at || 0).toLocaleString()}</li>
 									<li><span class="font-semibold">Trading Enabled:</span> {avg?.game?.trading_enabled}</li>
 									{#if avg?.game?.enabled}
-										<li><span class="font-semibold">Enabled At/On:</span> {new Date(avg?.game?.enabled).toLocaleDateString()}</li>
+										<li><span class="font-semibold">Enabled At/On:</span> {new Date(avg?.game?.enabled).toLocaleString()}</li>
 									{:else}
 										<li><span class="font-semibold">Enabled At/On:</span> Not enabled</li>
 									{/if}
