@@ -37,7 +37,7 @@
 
         let lbRows: LeaderboardRow[] = lbs
         .map(lb => {
-            let gainsAfterSales = ($state?.gameUser?.initial_balance || 0) - (lb?.current_balance || 0 + lb?.portfolio_value || 0)
+            let gainsAfterSales = ($state?.gameUser?.initial_balance || 0) - ((lb?.current_balance || 0) + (lb?.portfolio_value || 0))
             return {
                 userId: lb?.user?.id || '',
                 username: lb?.user?.username || '',
