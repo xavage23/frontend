@@ -15,7 +15,8 @@
         username: string;
         initialBalance: number;
         currentBalance: number;
-        shortingValue: number;
+        portfolioValue: number;
+        gainsAfterSales: number;
     }
 
     let rows: Readable<LeaderboardRow[]>;
@@ -40,13 +41,14 @@
                 username: lb?.user?.username || '',
                 initialBalance: lb?.initial_balance || 0,
                 currentBalance: lb?.current_balance || 0,
-                shortingValue: lb?.short_amount || 0,
+                portfolioValue: lb?.portfolio_value || 0,
+                gainsAfterSales: ($state?.gameUser?.initial_balance || 0) - (lb?.current_balance || 0 + lb?.portfolio_value || 0),
             }
         })
 
         const handler = new DataHandler(lbRows, { rowsPerPage: 10 })
         handler.sortDesc("currentBalance")
-        handler.sortAsc("shortingValue")
+        handler.sortDesc("gainsAfterSales")
         rows = handler.getRows()
 
         return {
@@ -73,13 +75,15 @@
                     <Th handler={data.handler} orderBy="username">Username</Th>
                     <Th handler={data.handler} orderBy="initialBalance">Initial Balance</Th>
                     <Th handler={data.handler} orderBy="currentBalance">Current Balance</Th>
-                    <Th handler={data.handler} orderBy="shortingValue">Shorting Value</Th>
+                    <Th handler={data.handler} orderBy="portfolioValue">Portfolio Value</Th>
+                    <Th handler={data.handler} orderBy="gainsAfterSales">Gains After Sales</Th>
                 </tr>
                 <tr>
                     <ThFilter handler={data.handler} filterBy="username"/>
                     <ThFilter handler={data.handler} filterBy="initialBalance"/>
                     <ThFilter handler={data.handler} filterBy="currentBalance"/>
-                    <ThFilter handler={data.handler} filterBy="shortingValue"/>
+                    <ThFilter handler={data.handler} filterBy="portfolioValue"/>
+                    <ThFilter handler={data.handler} filterBy="gainsAfterSales"/>
                 </tr>
             </thead>
             <tbody>
@@ -90,7 +94,8 @@
                         </td>
                         <td>${centsToCurrency(row.initialBalance)}</td>
                         <td>${centsToCurrency(row.currentBalance)}</td>
-                        <td>${centsToCurrency(row.shortingValue)}</td>
+                        <td>${centsToCurrency(row.portfolioValue)}</td>
+                        <td>${centsToCurrency(row.gainsAfterSales)}</td>
                     </tr>
                 {/each}
             </tbody>
