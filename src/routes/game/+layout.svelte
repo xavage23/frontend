@@ -69,7 +69,7 @@
 					<small class="block"><span class="font-semibold text-red-400">Applied Penalty/Extra:</span> ${centsToCurrency(($state?.gameUser?.game?.initial_balance || 0) - ($state?.gameUser?.initial_balance || 0))}</small>
 				{/if}
 				<div class="mb-5"></div>
-				<small class="block"><span class="font-semibold">Current Price Snapshot:</span> {$state?.gameUser?.game?.current_price_index}</small>
+				<small class="block"><span class="font-semibold">Current Price Index:</span> {$state?.gameUser?.game?.current_price_index}</small>
 				<small class="block"><span class="font-semibold">Game:</span> {$state?.gameUser?.game?.code} - {$state?.gameUser?.game?.name}</small>	
 				<small class="block"><span class="font-semibold">Game Created On:</span> {new Date($state?.gameUser?.game?.created_at || 0)?.toLocaleString()}</small>
 			</div>

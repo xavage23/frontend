@@ -7,6 +7,7 @@
 	import { page } from "$app/stores";
 	import Loading from "../../../../components/Loading.svelte";
     import ErrorComponent from "../../../../components/Error.svelte";
+	import StockRatio from "./StockRatio.svelte";
 
     const fetchStock = async () => {
         let res = await fetchClient(`${apiUrl}/users/${$state?.user?.id}/stocks/${$page.params.id}`);
@@ -31,19 +32,35 @@
 {:then stock}
     <h1 class="font-semibold text-3xl">{stock?.ticker}</h1>
     <h2 class="text-2xl">Ratios</h2>
-   
-    <ul class="list-disc list-inside">
-        {#each (stock?.ratios || []) as ratio}
+
+    <ul>
+        {#each stock?.prior_ratios as pr}
             <li>
-                <span class="font-semibold">{ratio?.name}:</span> {ratio?.value?.toFixed(2)} 
-
-                {#if ratio?.value_text}
-                    <span class="italic">({ratio?.value_text})</span>
-                {/if}
+                <h2 class="text-xl font-semibold">{pr.game.name} - Index {pr.price_index}</h2>
+                <ul class="list-disc list-inside">
+                    {#each pr.ratios as ratio}
+                        <li>
+                            <StockRatio {ratio} />
+                        </li>
+                    {/each}
+                </ul>
             </li>
-        {/each}    
+        {/each}
+        <li>
+            <h2 class="text-xl font-semibold">Current Game</h2>
+            <ul class="list-disc list-inside">
+                {#each stock?.known_ratios as kr}
+                    <h3 class="text-lg font-semibold">Index {kr.price_index}</h3>
+                    {#each kr?.ratios as ratio}
+                        <li>
+                            <StockRatio {ratio} />
+                        </li>
+                    {/each}
+                {/each}
+            </ul>
+        </li>
     </ul>
-
+   
     <div class="mb-5"></div>
 
     <h2 class="text-2xl">Description</h2>
