@@ -101,6 +101,7 @@
                         <td>${centsToCurrency(row.currentBalance)}</td>
                         <td>${centsToCurrency(row.portfolioValue)}</td>
                         <td>${centsToCurrency(row.gainsAfterSales)}</td>
+                        <td>${centsToCurrency(row.possibleFinalBalance)}</td>
                     </tr>
                 {/each}
             </tbody>
