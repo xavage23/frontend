@@ -50,8 +50,7 @@
         })
 
         const handler = new DataHandler(lbRows, { rowsPerPage: 10 })
-        handler.sortDesc("currentBalance")
-        handler.sortDesc("gainsAfterSales")
+        handler.sortDesc("possibleFinalBalance")
         rows = handler.getRows()
 
         return {
