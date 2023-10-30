@@ -50,7 +50,13 @@
             <h2 class="text-xl font-semibold">Current Game</h2>
             <ul class="list-disc list-inside">
                 {#each stock?.known_ratios as kr}
-                    <h3 class="text-lg font-semibold">Index {kr.price_index}</h3>
+                    <h3 class="text-lg font-semibold">
+                        {#if kr?.price_index == $state?.gameUser?.game?.current_price_index}
+                            Current
+                        {:else}
+                            Index {kr.price_index}
+                        {/if}
+                    </h3>
                     {#each kr?.ratios as ratio}
                         <li>
                             <StockRatio {ratio} />
