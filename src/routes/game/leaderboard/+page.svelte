@@ -17,6 +17,7 @@
         currentBalance: number;
         portfolioValue: number;
         gainsAfterSales: number;
+        possibleFinalBalance: number;
     }
 
     let rows: Readable<LeaderboardRow[]>;
@@ -36,13 +37,15 @@
 
         let lbRows: LeaderboardRow[] = lbs
         .map(lb => {
+            let gainsAfterSales = ($state?.gameUser?.initial_balance || 0) - (lb?.current_balance || 0 + lb?.portfolio_value || 0)
             return {
                 userId: lb?.user?.id || '',
                 username: lb?.user?.username || '',
                 initialBalance: lb?.initial_balance || 0,
                 currentBalance: lb?.current_balance || 0,
                 portfolioValue: lb?.portfolio_value || 0,
-                gainsAfterSales: ($state?.gameUser?.initial_balance || 0) - (lb?.current_balance || 0 + lb?.portfolio_value || 0),
+                gainsAfterSales: gainsAfterSales,
+                possibleFinalBalance: (lb?.current_balance || 0) + (lb?.portfolio_value || 0)
             }
         })
 
@@ -77,6 +80,7 @@
                     <Th handler={data.handler} orderBy="currentBalance">Current Balance</Th>
                     <Th handler={data.handler} orderBy="portfolioValue">Portfolio Value</Th>
                     <Th handler={data.handler} orderBy="gainsAfterSales">Gains After Sales</Th>
+                    <Th handler={data.handler} orderBy="possibleFinalBalance">Possible Final Balance</Th>
                 </tr>
                 <tr>
                     <ThFilter handler={data.handler} filterBy="username"/>
@@ -84,6 +88,7 @@
                     <ThFilter handler={data.handler} filterBy="currentBalance"/>
                     <ThFilter handler={data.handler} filterBy="portfolioValue"/>
                     <ThFilter handler={data.handler} filterBy="gainsAfterSales"/>
+                    <ThFilter handler={data.handler} filterBy="possibleFinalBalance"/>
                 </tr>
             </thead>
             <tbody>
