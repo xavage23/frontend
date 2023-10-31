@@ -60,6 +60,12 @@
     }
 </script>
 
+<svelte:head>
+    <title>News</title>
+</svelte:head>
+
+<h1 class="text-4xl font-semibold">News</h1>
+
 {#await fetchNews()}
     <Loading msg={"Loading"} disableHeader={true} />
 {:then data}

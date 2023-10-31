@@ -34,7 +34,7 @@
 			enabled: () => true
 		},
 		{
-			name: "Game News",
+			name: "News",
 			description: "View the latest investment news!",
 			link: "/game/news",
 			enabled: () => true
