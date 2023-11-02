@@ -31,7 +31,7 @@
 			name: "Transaction History",
 			description: "View a history of all transactions!",
 			link: "/game/transactions/history",
-			enabled: () => true
+			enabled: () => $state?.gameUser?.game?.transaction_history_allowed || false
 		},
 		{
 			name: "News",
