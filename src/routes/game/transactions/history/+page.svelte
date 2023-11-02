@@ -39,7 +39,13 @@
     let showModal: boolean = false;
 
     const fetchTransactions = async () => {
-        let res = await fetchClient(`${apiUrl}/users/${$state?.user?.id}/transactions?include_users=true&include_origin_game=true`)
+        let extQuery = []
+
+        if($state?.gameUser?.game?.private_transaction_history) {
+            extQuery.push("only_me=true")
+        }
+
+        let res = await fetchClient(`${apiUrl}/users/${$state?.user?.id}/transactions?include_users=true&include_origin_game=true${extQuery.length > 0 ? `&${extQuery.join("&")}` : ''}`)
 
         if (!res.ok) {
             let err: ApiError = await res.json();
