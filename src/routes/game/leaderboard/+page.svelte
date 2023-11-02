@@ -16,6 +16,7 @@
         initialBalance: number;
         currentBalance: number;
         portfolioValue: number;
+        portfolioTotalValue: number;
         gainsAfterSales: number;
         possibleFinalBalance: number;
     }
@@ -44,6 +45,7 @@
                 initialBalance: lb?.initial_balance || 0,
                 currentBalance: lb?.current_balance || 0,
                 portfolioValue: lb?.portfolio_value || 0,
+                portfolioTotalValue: (lb?.current_balance || 0) + (lb?.portfolio_value || 0),
                 gainsAfterSales: gainsAfterSales,
                 possibleFinalBalance: (lb?.current_balance || 0) + (lb?.portfolio_value || 0)
             }
@@ -77,6 +79,7 @@
                     <Th handler={data.handler} orderBy="username">Username</Th>
                     <Th handler={data.handler} orderBy="initialBalance">Initial Balance</Th>
                     <Th handler={data.handler} orderBy="currentBalance">Current Balance</Th>
+                    <Th handler={data.handler} orderBy="portfolioTotalValue">Portfolio Total Value</Th>
                     <Th handler={data.handler} orderBy="portfolioValue">Portfolio Value</Th>
                     <Th handler={data.handler} orderBy="gainsAfterSales">Gains After Sales</Th>
                     <Th handler={data.handler} orderBy="possibleFinalBalance">Possible Final Balance</Th>
@@ -85,6 +88,7 @@
                     <ThFilter handler={data.handler} filterBy="username"/>
                     <ThFilter handler={data.handler} filterBy="initialBalance"/>
                     <ThFilter handler={data.handler} filterBy="currentBalance"/>
+                    <ThFilter handler={data.handler} filterBy="portfolioTotalValue"/>
                     <ThFilter handler={data.handler} filterBy="portfolioValue"/>
                     <ThFilter handler={data.handler} filterBy="gainsAfterSales"/>
                     <ThFilter handler={data.handler} filterBy="possibleFinalBalance"/>
@@ -93,11 +97,10 @@
             <tbody>
                 {#each $rows as row}
                     <tr>
-                        <td>
-                            {row.username}
-                        </td>
+                        <td>{row.username}</td>
                         <td>${centsToCurrency(row.initialBalance)}</td>
                         <td>${centsToCurrency(row.currentBalance)}</td>
+                        <td>${centsToCurrency(row.portfolioTotalValue)}</td>
                         <td>${centsToCurrency(row.portfolioValue)}</td>
                         <td>${centsToCurrency(row.gainsAfterSales)}</td>
                         <td>${centsToCurrency(row.possibleFinalBalance)}</td>
