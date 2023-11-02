@@ -119,6 +119,10 @@
 {#await fetchTransactions()}
     <Loading msg={"Loading"} disableHeader={true} />
 {:then data}
+    {#if $state?.gameUser?.game?.private_transaction_history}
+        <h2 class="text-yellow-400 font-semibold">This game has private transaction history enabled. You can currently only see your OWN transactions.</h2>
+    {/if}
+
     <Datatable handler={data.handler} search={false}>
         <table>
             <thead>
