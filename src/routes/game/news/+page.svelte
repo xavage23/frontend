@@ -19,6 +19,8 @@
         priorPrices?: PriorPricePoint[];
         title: string;
         description: string;
+        showAt: number;
+        showAtStr: string;
     }
 
     let rows: Readable<NewsRow[]>;
@@ -27,6 +29,8 @@
     let selectedPriorPricesRow: Stock | undefined;
 
     const fetchNews = async () => {
+        let gameEnabledDate = new Date($state?.gameUser?.game?.enabled || '');
+
         let res = await fetchClient(`${apiUrl}/users/${$state?.user?.id}/news?with_stocks=true`)
 
         if (!res.ok) {
@@ -45,11 +49,14 @@
                 knownPrices: newsEntry.affected_stock?.known_prices || [],
                 priorPrices: newsEntry.affected_stock?.prior_prices,
                 title: newsEntry.title,
-                description: newsEntry.description
+                description: newsEntry.description,
+                showAt: newsEntry.show_at,
+                showAtStr: new Date(gameEnabledDate.getTime() + newsEntry.show_at*1000).toLocaleString()
             }
         })
 
         const handler = new DataHandler(newsRows, { rowsPerPage: 10 })
+        handler.sortDesc("showAt")
         rows = handler.getRows()
         
         return {
@@ -76,11 +83,13 @@
                     <Th handler={data.handler} orderBy="stockTicker">Ticker</Th>
                     <Th handler={data.handler} orderBy="title">Title</Th>
                     <Th handler={data.handler} orderBy="knownPrices">Price History</Th> <!--In reality, this includes prior prices -->
+                    <Th handler={data.handler} orderBy="showAt">Time</Th>
                 </tr>
                 <tr>
                     <ThFilter handler={data.handler} filterBy="stockTicker" />
                     <ThFilter handler={data.handler} filterBy="title" />
                     <ThFilter handler={data.handler} filterBy="knownPrices" />
+                    <ThFilter handler={data.handler} filterBy="showAt" />
                 </tr>
             </thead>
             <tbody>
@@ -127,6 +136,9 @@
                         {:else}
                             -
                         {/if}
+                    </td>
+                    <td>
+                        {row.showAtStr}
                     </td>
                 </tr>
                 {/each}
