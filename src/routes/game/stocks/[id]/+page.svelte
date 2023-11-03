@@ -111,7 +111,7 @@
         color={Color.Themable}
         icon="mdi:arrow-left"
         text="Buy/Sell Stock"
-        href="/game/transactions?stock={stock?.ticker}"
+        href="/game/transactions?ticker={stock?.ticker}"
     />
 {:catch err}
     <ErrorComponent msg={err?.toString()} />
