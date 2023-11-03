@@ -156,13 +156,15 @@
         />
     {/if}
 
-    <p class="font-semibold">
-        <span class="text-italic">TIP:</span>
+    {#if $state?.gameUser?.game?.shorting_allowed}
+        <p class="font-semibold">
+            <span class="text-italic">TIP:</span>
 
-        You can short a stock by using a negative amount. 
-        
-        For example, if you want to short 5 shares of a stock, you can enter -5 in the amount field.
-    </p>
+            You can short a stock by using a negative amount. 
+            
+            For example, if you want to short 5 shares of a stock, you can enter -5 in the amount field.
+        </p>
+    {/if}
 {:catch err}
     <ErrorComponent msg={err?.toString()} />
 {/await}    
