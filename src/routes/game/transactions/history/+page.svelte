@@ -41,7 +41,7 @@
     const fetchTransactions = async () => {
         let extQuery = []
 
-        if($state?.gameUser?.game?.private_transaction_history) {
+        if($state?.gameUser?.game?.private_transaction_history && !$state?.user?.root) {
             extQuery.push("only_me=true")
         }
 
@@ -119,8 +119,12 @@
 {#await fetchTransactions()}
     <Loading msg={"Loading"} disableHeader={true} />
 {:then data}
-    {#if $state?.gameUser?.game?.private_transaction_history}
+    {#if $state?.gameUser?.game?.private_transaction_history && !$state?.user?.root}
         <h2 class="text-yellow-400 font-semibold">This game has private transaction history enabled. You can currently only see your OWN transactions.</h2>
+    {/if}
+
+    {#if $state?.user?.root}
+        <h2 class="text-yellow-400 font-semibold">You are a root user. You can see all transactions regardless of private transaction history state.</h2>
     {/if}
 
     <Datatable handler={data.handler} search={false}>
