@@ -12,6 +12,7 @@
 	import { Color } from "../../../components/button/colors";
 	import InputNumber from "../../../components/inputs/InputNumber.svelte";
 	import Label from "../../../components/inputs/Label.svelte";
+    import logger from "$lib/logger"
 
     let selectedStockId = '';
     let selectedAction = '';
@@ -26,6 +27,20 @@
 		}
 
 		let stocks: StockList = await res.json();
+
+        try {
+            let searchParams = new URLSearchParams(window.location.search);
+            let selectedTicker = searchParams.get("ticker")
+            if(selectedTicker) {
+                let stock = stocks?.stocks?.find(s => s?.ticker == selectedTicker);
+
+                if(stock) {
+                    selectedStockId = stock.id;
+                }
+            }
+        } catch (err) {
+            logger.error("Transactions", err)
+        }
 
         return {
             stocks,

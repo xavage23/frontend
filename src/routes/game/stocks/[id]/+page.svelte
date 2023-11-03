@@ -8,6 +8,8 @@
 	import Loading from "../../../../components/Loading.svelte";
     import ErrorComponent from "../../../../components/Error.svelte";
 	import StockRatio from "./StockRatio.svelte";
+	import ButtonLink from "../../../../components/button/ButtonLink.svelte";
+	import { Color } from "../../../../components/button/colors";
 
     const fetchStock = async () => {
         let res = await fetchClient(`${apiUrl}/users/${$state?.user?.id}/stocks/${$page.params.id}`);
@@ -104,6 +106,13 @@
             </ul>
         </li>
     </ul>
+
+    <ButtonLink 
+        color={Color.Themable}
+        icon="mdi:arrow-left"
+        text="Buy/Sell Stock"
+        href="/game/transactions?stock={stock?.ticker}"
+    />
 {:catch err}
     <ErrorComponent msg={err?.toString()} />
 {/await}
